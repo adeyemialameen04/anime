@@ -1,4 +1,4 @@
-import { slugify } from "@/lib/helpers";
+import { slugify } from "@/lib/helpers/slugify";
 import menu_list from "@/lib/menu-list";
 import Link from "next/link";
 
