@@ -2,7 +2,7 @@
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import siteConfig from "@/config/site";
-import { slugify } from "@/lib/helpers";
+import { slugify } from "@/lib/helpers/slugify";
 import menu_list from "@/lib/menu-list";
 import { cn } from "@/lib/utils";
 import { Mountain } from "lucide-react";
