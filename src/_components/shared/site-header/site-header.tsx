@@ -7,7 +7,7 @@ import MobileNav from "./mobile-nav";
 
 export default function SiteHeader() {
 	return (
-		<header className="top-0 sticky z-[50] py-4 border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+		<header className="top-0 sticky z-[50] py-3 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
 			<div className="container flex items-center justify-between gap-4">
 				{/* <div className="flex items-center justify-between gap-3 max-w-screen-2xl mx-auto"> */}
 				<div className="flex items-center gap-3">

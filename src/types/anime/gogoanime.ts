@@ -53,6 +53,71 @@ export interface ISearch<T> {
 	results: T[];
 }
 
+export interface IAnimeEpisode {
+	id: string;
+	number: number;
+	title?: string;
+	description?: string;
+	isFiller?: boolean;
+	url?: string;
+	image?: string;
+	imageHash?: string;
+	releaseDate?: string;
+	[x: string]: unknown;
+}
+
+export interface Trailer {
+	id: string;
+	url?: string;
+	site?: string;
+	thumbnail?: string;
+	thumbnailHash?: string | null;
+}
+export interface FuzzyDate {
+	year?: number;
+	month?: number;
+	day?: number;
+}
+
+export declare enum SubOrSub {
+	SUB = "sub",
+	DUB = "dub",
+	BOTH = "both",
+}
+export interface IAnimeInfo extends IAnimeResult {
+	malId?: number | string;
+	genres?: string[];
+	description?: string;
+	status?: MediaStatus;
+	totalEpisodes?: number;
+	/**
+	 * @deprecated use `hasSub` or `hasDub` instead
+	 */
+	subOrDub?: SubOrSub;
+	hasSub?: boolean;
+	hasDub?: boolean;
+	synonyms?: string[];
+	/**
+	 * two letter representation of coutnry: e.g JP for japan
+	 */
+	countryOfOrigin?: string;
+	isAdult?: boolean;
+	isLicensed?: boolean;
+	/**
+	 * `FALL`, `WINTER`, `SPRING`, `SUMMER`
+	 */
+	season?: string;
+	studios?: string[];
+	color?: string;
+	cover?: string;
+	trailer?: Trailer;
+	episodes?: IAnimeEpisode[];
+	startDate?: FuzzyDate;
+	endDate?: FuzzyDate;
+	recommendations?: IAnimeResult[];
+	relations?: IAnimeResult[];
+}
+
 // export interface TrendingAnime {
 //   <ISearch<IAnimeResult>>
 // }

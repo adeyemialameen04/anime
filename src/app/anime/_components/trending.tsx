@@ -16,8 +16,6 @@ import Link from "next/link";
 export default async function Trending({
 	trending,
 }: { trending: IAnimeResult[] }) {
-	console.log(JSON.stringify(trending, null, 2));
-
 	return (
 		<TabsContent value="trending">
 			<div className="pt-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
