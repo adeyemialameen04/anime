@@ -20,7 +20,7 @@ type Top10AnimeTimePeriod = "day" | "week" | "month";
 type MostPopularAnime = Pick<Anime, CommonAnimeProps | "episodes" | "type"> & {
 	jname: string | null;
 };
-type SpotlightAnime = MostPopularAnime &
+export type SpotlightAnime = MostPopularAnime &
 	Pick<Top10Anime, "rank"> & {
 		description: string | null;
 		otherInfo: string[];
