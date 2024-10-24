@@ -10,6 +10,12 @@ const nextConfig: NextConfig = {
 				port: "",
 				pathname: "/thumbnail/**",
 			},
+			{
+				protocol: "https",
+				hostname: "s4.anilist.co",
+				port: "",
+				pathname: "/file/**",
+			},
 		],
 	},
 };
