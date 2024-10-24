@@ -1,9 +1,9 @@
-import { Button } from "@/components/ui/button";
+import Navbar from "@/_components/shared/site-header/site-header";
 
 export default function Home() {
 	return (
-		<main className="p-8">
-			<Button className="font-dm-sans">Hello</Button>
+		<main className="">
+			<Navbar />
 		</main>
 	);
 }
