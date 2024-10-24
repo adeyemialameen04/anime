@@ -1,5 +1,5 @@
 "use client";
-import type { SpotlightAnime } from "@/types/anime";
+import type { SpotlightAnime } from "@/types/anime/hianime";
 import HeroItem from "./hero-item";
 import {
 	Carousel,
@@ -19,6 +19,7 @@ export default function HeroCarousel({
 				plugins={[
 					Autoplay({
 						delay: 4000,
+						stopOnMouseEnter: true,
 					}),
 				]}
 				opts={{
@@ -28,7 +29,7 @@ export default function HeroCarousel({
 			>
 				<CarouselContent>
 					{spotlight.map((anime) => (
-						<CarouselItem key={anime.id}>
+						<CarouselItem key={anime.id} className="overflow-hidden">
 							<HeroItem anime={anime} />
 						</CarouselItem>
 					))}

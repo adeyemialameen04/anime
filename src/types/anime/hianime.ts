@@ -25,10 +25,10 @@ export type SpotlightAnime = MostPopularAnime &
 		description: string | null;
 		otherInfo: string[];
 	};
-type TrendingAnime = Pick<Anime, CommonAnimeProps | "jname"> &
+export type TrendingAnime = Pick<Anime, CommonAnimeProps | "jname"> &
 	Pick<Top10Anime, "rank">;
-type LatestEpisodeAnime = Anime;
-type TopUpcomingAnime = Anime;
+export type LatestEpisodeAnime = Anime;
+export type TopUpcomingAnime = Anime;
 type TopAiringAnime = MostPopularAnime;
 type MostFavoriteAnime = MostPopularAnime;
 type LatestCompletedAnime = MostPopularAnime;
