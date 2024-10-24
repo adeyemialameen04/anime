@@ -1,58 +1,55 @@
 {
-  "$schema": "https://biomejs.dev/schemas/1.9.4/schema.json",
-  "vcs": {
-    "enabled": true,
-    "clientKind": "git",
-    "useIgnoreFile": false,
-    "defaultBranch": "main",
-    "root": "./"
-  },
-  "files": {
-    "ignoreUnknown": false,
-    "ignore": [
-      "./.next/",
-      "./node_modules/"
-    ]
-  },
-  "formatter": {
-    "enabled": true,
-    "indentStyle": "tab"
-  },
-  "organizeImports": {
-    "enabled": true
-  },
-  "linter": {
-    "enabled": true,
-    "rules": {
-      "suspicious": {
-        "recommended": true
-      },
-      "recommended": true,
-      "nursery": {
-        "noSecrets": "off",
-        "noDuplicateProperties": "warn",
-        "noNestedTernary": "warn",
-        "recommended": true,
-        "noImgElement": "warn",
-        "noHeadElement": "error"
-      },
-      "correctness": {
-        "noUnusedImports": "warn",
-        "recommended": true,
-        "noUnreachable": {
-          "level": "warn"
-        },
-        "useJsxKeyInIterable": "warn",
-        "noUnusedVariables": {
-          "level": "error",
-          "fix": "none"
-        }
-      }
-    }
-  },
-  "javascript": {
-    "formatter": {
-      "quoteStyle": "double"
-    }
-  }
+	"$schema": "https://biomejs.dev/schemas/1.9.4/schema.json",
+	"vcs": {
+		"enabled": true,
+		"clientKind": "git",
+		"useIgnoreFile": false,
+		"defaultBranch": "main",
+		"root": "./"
+	},
+	"files": {
+		"ignoreUnknown": false,
+		"ignore": ["./.next/", "./node_modules/"]
+	},
+	"formatter": {
+		"enabled": true,
+		"indentStyle": "tab"
+	},
+	"linter": {
+		"enabled": true,
+		"rules": {
+			"a11y": {
+				"noSvgWithoutTitle": "off"
+			},
+			"suspicious": {
+				"recommended": true
+			},
+			"recommended": true,
+			"nursery": {
+				"noSecrets": "off",
+				"noDuplicateProperties": "warn",
+				"noNestedTernary": "warn",
+				"recommended": true,
+				"noImgElement": "warn",
+				"noHeadElement": "error"
+			},
+			"correctness": {
+				"noUnusedImports": "warn",
+				"recommended": true,
+				"noUnreachable": {
+					"level": "warn"
+				},
+				"useJsxKeyInIterable": "warn",
+				"noUnusedVariables": {
+					"level": "error",
+					"fix": "none"
+				}
+			}
+		}
+	},
+	"javascript": {
+		"formatter": {
+			"quoteStyle": "double"
+		}
+	}
 }
