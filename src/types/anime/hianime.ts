@@ -238,7 +238,7 @@ type ScrapedAnimeEpisodes = {
 	episodes: AnimeEpisode[];
 };
 
-type ScrapedAnimeAboutInfo = Pick<
+export type ScrapedAnimeAboutInfo = Pick<
 	ScrapedAnimeSearchResult,
 	"mostPopularAnimes"
 > & {
