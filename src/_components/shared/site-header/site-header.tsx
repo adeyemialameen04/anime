@@ -3,6 +3,7 @@ import { Github, Mountain } from "lucide-react";
 import { ModeToggle } from "../mode-toggle";
 import MainNav from "./main-nav";
 import MobileNav from "./mobile-nav";
+import { Button } from "@/components/ui/button";
 
 export default function Navbar() {
 	return (
@@ -16,7 +17,9 @@ export default function Navbar() {
 				</div>
 				<div className="flex gap-3 items-center">
 					<Input placeholder="Search Anything ..." />
-					<Github size={17} />
+					<Button variant={"ghost"} size={"icon"}>
+						<Github size={17} />
+					</Button>
 					<ModeToggle />
 				</div>
 			</div>
