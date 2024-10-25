@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import type { AnilistAnime } from "@/types/anime/anilist";
-import { LucideImage, Play } from "lucide-react";
+import { LucideImage, Play, PlusCircle } from "lucide-react";
 import Image from "next/image";
 import parse from "html-react-parser";
 import TruncatedDescription from "./truncated-description";
@@ -59,7 +59,17 @@ export default function Hero({
 							)}
 						</aside>
 
-						<article className="flex w-full flex-col gap-2 pt-3 md:w-2/3">
+						<article className="flex w-full flex-col gap-3 pt-3 md:w-2/3">
+							<div className="flex gap-3">
+								<Button className="max-w-40">
+									<Play className="h-4 w-4" /> Watch
+								</Button>
+								<Button variant={"outline"}>
+									<PlusCircle className="h-4 w-4" />
+									Add to List
+								</Button>
+							</div>
+
 							<div className="flex gap-3 flex-wrap">
 								{anime.genres.map((genre) => (
 									<Link href={`/anime/genre/${slugify(genre)}`} key={genre}>
