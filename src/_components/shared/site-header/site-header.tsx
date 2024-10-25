@@ -17,7 +17,7 @@ export default function SiteHeader() {
 				</div>
 				<div className="flex gap-3 items-center">
 					<Input placeholder="Search Anything ..." />
-					<Button variant={"ghost"} size={"icon"}>
+					<Button variant={"ghost"} size={"sm"}>
 						<Github size={17} />
 					</Button>
 					<ModeToggle />

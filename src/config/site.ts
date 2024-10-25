@@ -1,4 +1,4 @@
 const siteConfig = {
-	name: "Anime",
+	name: "UnWind",
 };
 export default siteConfig;
