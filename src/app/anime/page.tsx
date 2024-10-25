@@ -1,4 +1,4 @@
-import { getHomePage, getTrendingAnimes } from "@/queries/anime/home";
+import { getHomePage, getTrendingAnimes } from "@/queries/anime";
 import HeroCarousel from "./_components/hero-carousel";
 import type { LatestEpisodeAnime, SpotlightAnime } from "@/types/anime/hianime";
 import AnimeTabs from "./_components/anime-tabs";

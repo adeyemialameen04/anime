@@ -4,6 +4,12 @@ export interface Title {
 	native: string;
 	userPreferred: string;
 }
+export interface EpisodeList {
+	id: string;
+	episodeId: number;
+	title: string;
+	number: number;
+}
 
 export interface AnilistAnime {
 	id: number;
@@ -122,6 +128,7 @@ export interface AnilistAnime {
 			}[];
 		}[];
 	};
+	episodesList: EpisodeList[];
 }
 
 export interface Sourcedata {

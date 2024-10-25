@@ -10,13 +10,12 @@ export async function getAnilistAnimeDetails(id: string) {
 		null,
 		{
 			next: {
-				revalidate: 0,
+				revalidate: 3600,
 			},
 		},
 	);
 
 	try {
-		console.log("called");
 		return await fetchAnimeDetails();
 	} catch (err) {
 		console.error("Error fetching home page:", err);
