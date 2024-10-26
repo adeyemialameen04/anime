@@ -1,10 +1,5 @@
 import { Badge } from "@/components/ui/badge";
-import {
-	CardContent,
-	CardHeader,
-	CardDescription,
-	Card,
-} from "@/components/ui/card";
+import { CardContent, CardHeader, Card } from "@/components/ui/card";
 import truncateText from "@/lib/helpers/truncate";
 import Image from "next/image";
 import Link from "next/link";

@@ -1,7 +1,5 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { AnilistAnime } from "@/types/anime/anilist";
-import Relations from "./relations";
-import Recommendations from "./recommendations";
 import AnimeCard from "./card";
 
 export default async function AnimeDetailsTab({
@@ -25,8 +23,8 @@ export default async function AnimeDetailsTab({
 				value="recommendations"
 				className="mt-4 grid grid-cols-2 md:grid-cols-3 gap-4"
 			>
-				{recommendations.map((anime) => (
-					<AnimeCard anime={anime} key={anime.id} />
+				{recommendations.map((anime, index) => (
+					<AnimeCard anime={anime} key={`${anime.id}-${index}`} />
 				))}
 			</TabsContent>
 			<TabsContent
@@ -37,8 +35,6 @@ export default async function AnimeDetailsTab({
 					<AnimeCard anime={anime} key={anime.id} />
 				))}
 			</TabsContent>
-			{/* <Recommendations anime={anime} /> */}
-			{/* <EpisodesTab episodes={anime.episodesList} id={anime.id} /> */}
 		</Tabs>
 	);
 }

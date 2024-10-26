@@ -40,161 +40,61 @@ import {
 	SidebarRail,
 	SidebarTrigger,
 } from "@/components/ui/sidebar";
-import { EpisodeList } from "@/types/anime/anilist";
+import type { AnilistAnime, EpisodeList } from "@/types/anime/anilist";
 import truncateText from "@/lib/helpers/truncate";
-import VideoPlayer from "@/_components/video-player";
-// const data = {
-// 	versions: ["Sub", "Dub"],
-// 	navMain: [
-// 		{
-// 			title: "Getting Started",
-// 			url: "#",
-// 			items: [
-// 				{
-// 					title: "Installation",
-// 					url: "#",
-// 				},
-// 				{
-// 					title: "Project Structure",
-// 					url: "#",
-// 				},
-// 			],
-// 		},
-// 		{
-// 			title: "Building Your Application",
-// 			url: "#",
-// 			items: [
-// 				{
-// 					title: "Routing",
-// 					url: "#",
-// 				},
-// 				{
-// 					title: "Data Fetching",
-// 					url: "#",
-// 					isActive: true,
-// 				},
-// 				{
-// 					title: "Rendering",
-// 					url: "#",
-// 				},
-// 				{
-// 					title: "Caching",
-// 					url: "#",
-// 				},
-// 				{
-// 					title: "Styling",
-// 					url: "#",
-// 				},
-// 				{
-// 					title: "Optimizing",
-// 					url: "#",
-// 				},
-// 				{
-// 					title: "Configuring",
-// 					url: "#",
-// 				},
-// 				{
-// 					title: "Testing",
-// 					url: "#",
-// 				},
-// 				{
-// 					title: "Authentication",
-// 					url: "#",
-// 				},
-// 				{
-// 					title: "Deploying",
-// 					url: "#",
-// 				},
-// 				{
-// 					title: "Upgrading",
-// 					url: "#",
-// 				},
-// 				{
-// 					title: "Examples",
-// 					url: "#",
-// 				},
-// 			],
-// 		},
-// 		{
-// 			title: "API Reference",
-// 			url: "#",
-// 			items: [
-// 				{
-// 					title: "Components",
-// 					url: "#",
-// 				},
-// 				{
-// 					title: "File Conventions",
-// 					url: "#",
-// 				},
-// 				{
-// 					title: "Functions",
-// 					url: "#",
-// 				},
-// 				{
-// 					title: "next.config.js Options",
-// 					url: "#",
-// 				},
-// 				{
-// 					title: "CLI",
-// 					url: "#",
-// 				},
-// 				{
-// 					title: "Edge Runtime",
-// 					url: "#",
-// 				},
-// 			],
-// 		},
-// 		{
-// 			title: "Architecture",
-// 			url: "#",
-// 			items: [
-// 				{
-// 					title: "Accessibility",
-// 					url: "#",
-// 				},
-// 				{
-// 					title: "Fast Refresh",
-// 					url: "#",
-// 				},
-// 				{
-// 					title: "Next.js Compiler",
-// 					url: "#",
-// 				},
-// 				{
-// 					title: "Supported Browsers",
-// 					url: "#",
-// 				},
-// 				{
-// 					title: "Turbopack",
-// 					url: "#",
-// 				},
-// 			],
-// 		},
-// 	],
-// };
+import { useSearchParams } from "next/navigation";
 
 export default function EpisodesSidebar({
 	episodes,
-	id,
-}: { episodes: EpisodeList[]; id: string }) {
-	const data = {
+	children,
+	anime,
+}: {
+	episodes: EpisodeList[];
+	children: React.ReactNode;
+	anime: AnilistAnime;
+}) {
+	const searchParams = useSearchParams();
+	const currentEpisodeId = searchParams.get("ep");
+	const [searchQuery, setSearchQuery] = React.useState("");
+	const [selectedVersion, setSelectedVersion] = React.useState("Sub");
+
+	// Debounce search input to improve performance
+	const debouncedSearchQuery = React.useMemo(() => {
+		const timeoutId = setTimeout(() => searchQuery, 300);
+		return () => clearTimeout(timeoutId);
+	}, [searchQuery]);
+
+	// Filter episodes based on search query
+	const filteredEpisodes = React.useMemo(() => {
+		if (!searchQuery.trim()) return episodes;
+
+		const query = searchQuery.toLowerCase();
+		return episodes.filter(
+			(episode) =>
+				episode.title.toLowerCase().includes(query) ||
+				episode.number.toString().includes(query),
+		);
+	}, [episodes, searchQuery]);
+
+	const navigationData = {
 		versions: ["Sub", "Dub"],
 		navMain: [
 			{
 				title: "Episodes",
 				url: "#",
-				items: episodes.map((episode) => ({
+				items: filteredEpisodes.map((episode) => ({
 					title: `${episode.number}. ${truncateText(episode.title, { maxLength: 30 })}`,
-					url: `/anime/watch/${id}?ep=${episode.id.split("=").pop()}`,
-					isActive: "",
+					url: `/anime/watch/${anime.id}?ep=${episode.id.split("=").pop()}`,
+					isActive: episode.id.split("=").pop() === currentEpisodeId,
 				})),
 			},
 		],
 	};
-	const [selectedVersion, setSelectedVersion] = React.useState(
-		data.versions[0],
-	);
+
+	// Handle search input change
+	const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+		setSearchQuery(event.target.value);
+	};
 
 	return (
 		<SidebarProvider>
@@ -222,7 +122,7 @@ export default function EpisodesSidebar({
 									className="w-[--radix-dropdown-menu-trigger-width]"
 									align="start"
 								>
-									{data.versions.map((version) => (
+									{navigationData.versions.map((version) => (
 										<DropdownMenuItem
 											key={version}
 											onSelect={() => setSelectedVersion(version)}
@@ -237,7 +137,7 @@ export default function EpisodesSidebar({
 							</DropdownMenu>
 						</SidebarMenuItem>
 					</SidebarMenu>
-					<form>
+					<form onSubmit={(e) => e.preventDefault()}>
 						<SidebarGroup className="py-0">
 							<SidebarGroupContent className="relative">
 								<Label htmlFor="search" className="sr-only">
@@ -247,6 +147,8 @@ export default function EpisodesSidebar({
 									id="search"
 									placeholder="Search for episode..."
 									className="pl-8"
+									value={searchQuery}
+									onChange={handleSearchChange}
 								/>
 								<Search className="pointer-events-none absolute left-2 top-1/2 size-4 -translate-y-1/2 select-none opacity-50" />
 							</SidebarGroupContent>
@@ -254,9 +156,13 @@ export default function EpisodesSidebar({
 					</form>
 				</SidebarHeader>
 				<SidebarContent>
-					{data.navMain.map((item) => (
+					{navigationData.navMain.map((item) => (
 						<SidebarGroup key={item.title}>
-							<SidebarGroupLabel>{item.title}</SidebarGroupLabel>
+							<SidebarGroupLabel>
+								{item.title}{" "}
+								{filteredEpisodes.length !== episodes.length &&
+									`(${filteredEpisodes.length} results)`}
+							</SidebarGroupLabel>
 							<SidebarGroupContent>
 								<SidebarMenu>
 									{item.items.map((item, index) => (
@@ -280,8 +186,8 @@ export default function EpisodesSidebar({
 					<Breadcrumb>
 						<BreadcrumbList>
 							<BreadcrumbItem className="hidden md:block">
-								<BreadcrumbLink href="#">
-									Building Your Application
+								<BreadcrumbLink href={`/anime/${anime.id}`}>
+									{anime.title.english}
 								</BreadcrumbLink>
 							</BreadcrumbItem>
 							<BreadcrumbSeparator className="hidden md:block" />
@@ -291,15 +197,7 @@ export default function EpisodesSidebar({
 						</BreadcrumbList>
 					</Breadcrumb>
 				</header>
-				<VideoPlayer />
-				<div className="flex flex-1 flex-col gap-4 p-4">
-					<div className="grid auto-rows-min gap-4 md:grid-cols-3">
-						<div className="aspect-video rounded-xl bg-muted/50" />
-						<div className="aspect-video rounded-xl bg-muted/50" />
-						<div className="aspect-video rounded-xl bg-muted/50" />
-					</div>
-					<div className="min-h-[100vh] flex-1 rounded-xl bg-muted/50 md:min-h-min" />
-				</div>
+				{children}
 			</SidebarInset>
 		</SidebarProvider>
 	);
