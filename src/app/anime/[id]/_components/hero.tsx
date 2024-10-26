@@ -69,9 +69,11 @@ export default function Hero({
 
 						<article className="flex w-full flex-col gap-3 pt-3 md:w-2/3">
 							<div className="flex gap-3">
-								<Button className="max-w-40">
-									<Play className="h-4 w-4" /> Watch
-								</Button>
+								<Link href={`/anime/watch/${anime.episodesList[0]}`}>
+									<Button className="max-w-40">
+										<Play className="h-4 w-4" /> Watch
+									</Button>
+								</Link>
 								<Button variant={"outline"}>
 									<PlusCircle className="h-4 w-4" />
 									Add to List
