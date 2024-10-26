@@ -1,0 +1,65 @@
+
+"use client";
+import { useInfiniteAnimeEpisodes } from "@/hooks/use-infinite-scrolling-episodes";
+import { Skeleton } from "@/components/ui/skeleton";
+import InfiniteScrollContainer from "@/_components/infinite-scroll-container";
+import type { EpisodeList } from "@/types/anime/anilist";
+import { TabsContent } from "@/components/ui/tabs";
+import { Card, CardHeader } from "@/components/ui/card";
+import Image from "next/image";
+
+export default function EpisodesTab({ id }: { id: number }) {
+	const { episodes, error, isLoadingMore, isEmpty, loadMore, hasNextPage } =
+		useInfiniteAnimeEpisodes(id);
+
+	if (error) {
+		console.error(error);
+		return (
+			<div className="text-center text-red-500">Failed to load episodes</div>
+		);
+	}
+
+	if (isEmpty) return <div className="text-center">No episodes found</div>;
+
+	return (
+		<TabsContent value={"episodes"} className="mt-4">
+			<InfiniteScrollContainer
+				onBottomReached={loadMore}
+				isLoading={isLoadingMore}
+				hasNextPage={hasNextPage}
+				className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3"
+			>
+				{episodes.map((episode: EpisodeList) => (
+					<Card key={episode.episodeId} className="border-none">
+						<CardHeader className="border">
+							<div className="relative">
+								{/* <Image className="" src={episode}/> */}
+							</div>
+						</CardHeader>
+					</Card>
+				))}
+				{isLoadingMore && (
+					<div className="col-span-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
+						{Array.from({ length: 8 }).map((_, index) => (
+							<EpisodeSkeleton
+								key={`loading-${
+									// biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
+									index
+								}`}
+							/>
+						))}
+					</div>
+				)}
+			</InfiniteScrollContainer>
+		</TabsContent>
+	);
+}
+
+function EpisodeSkeleton() {
+	return (
+		<div className="p-4 border rounded-md shadow-sm space-y-2">
+			<Skeleton className="h-6 w-3/4" />
+			<Skeleton className="h-4 w-1/2" />
+		</div>
+	);
+}

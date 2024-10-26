@@ -34,7 +34,7 @@ export default function Hero({
 					<main className="flex flex-col gap-4 md:flex-row">
 						<aside className="transform -translate-y-24 md:-translate-y-32 w-full space-y-2 md:w-1/3">
 							<div className="relative aspect-[2/3] w-full overflow-hidden rounded-lg border bg-muted shadow">
-								{anime.coverImage.large ? (
+								{anime.coverImage ? (
 									<Image
 										alt={`Poster for ${anime.title || "anime"}`}
 										fill
@@ -42,7 +42,7 @@ export default function Hero({
 										loading="lazy"
 										sizes="(max-width: 768px) 100vw, 33vw"
 										// src={changeImageSize(animeInfo.poster)}
-										src={anime.coverImage.extraLarge}
+										src={anime.coverImage.extraLarge || anime.coverImage.large}
 									/>
 								) : (
 									<div className="flex h-full items-center justify-center">
@@ -51,7 +51,15 @@ export default function Hero({
 								)}
 							</div>
 							{anime.trailer && (
-								<a href="/">
+								<a
+									href={
+										anime.trailer.site === "youtube"
+											? `https://www.youtube.com/watch?v=${anime.trailer.id}`
+											: ""
+									}
+									target="_blank"
+									rel="noreferrer"
+								>
 									<Button className="w-full mt-1">
 										<Play className="h-4 w-4 mr-2" /> Watch Trailer
 									</Button>

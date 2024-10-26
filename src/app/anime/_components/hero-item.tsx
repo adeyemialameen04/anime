@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+// import changeImageSize from "@/lib/helpers/sizes";
 import truncateText from "@/lib/helpers/truncate";
 import type { SpotlightAnime } from "@/types/anime/hianime";
 import { Play, Info } from "lucide-react";
@@ -6,12 +7,20 @@ import Image from "next/image";
 import Link from "next/link";
 
 export default function HeroItem({ anime }: { anime: SpotlightAnime }) {
+	function changeImageSize(url: string): string {
+		const newUrl = url.replace(
+			"https://cdn.noitatnemucod.net/thumbnail/1366x768",
+			"https://cdn.noitatnemucod.net/thumbnail/1866x1080",
+		);
+		return newUrl;
+	}
+
 	return (
 		<div className="md:rounded-xl relative h-[600px] w-full overflow-hidden">
 			<div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/50 to-transparent z-10" />
 			<div className="absolute inset-0">
 				<Image
-					src={anime.poster as string}
+					src={changeImageSize(anime.poster as string)}
 					alt="Anime Cover"
 					fill
 					priority

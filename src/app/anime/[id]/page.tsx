@@ -2,7 +2,7 @@ import { getAnilistAnimeDetails } from "@/queries/anime/[id]";
 // import type { IAnimeInfo } from "@/types/anime/gogoanime";
 import { notFound } from "next/navigation";
 import Hero from "./_components/hero";
-import AnimeDetailsTab from "./_components/anime-detail-tabs";
+import AnimeDetailsTab from "./_components/details";
 // import type { SuccessResponse } from "@/types/api";
 // import type { ScrapedAnimeAboutInfo } from "@/types/anime/hianime";
 
