@@ -2,7 +2,6 @@ import { Button } from "@/components/ui/button";
 import type { AnilistAnime } from "@/types/anime/anilist";
 import { LucideImage, Play, PlusCircle } from "lucide-react";
 import Image from "next/image";
-import parse from "html-react-parser";
 import TruncatedDescription from "./truncated-description";
 import Link from "next/link";
 import { slugify } from "@/lib/helpers/slugify";
@@ -69,7 +68,9 @@ export default function Hero({
 
 						<article className="flex w-full flex-col gap-3 pt-3 md:w-2/3">
 							<div className="flex gap-3">
-								<Link href={`/anime/watch/${anime.episodesList[0]}`}>
+								<Link
+									href={`/anime/watch/${anime.id}?ep=${anime.episodesList[0].episodeId}`}
+								>
 									<Button className="max-w-40">
 										<Play className="h-4 w-4" /> Watch
 									</Button>
