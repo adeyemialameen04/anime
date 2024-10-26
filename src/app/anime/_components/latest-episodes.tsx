@@ -1,4 +1,5 @@
 import { Card, CardContent, CardTitle } from "@/components/ui/card";
+import changeImageSize from "@/lib/helpers/sizes";
 import type { LatestEpisodeAnime } from "@/types/anime/hianime";
 import { TabsContent } from "@radix-ui/react-tabs";
 import { ImageIcon } from "lucide-react";
@@ -19,7 +20,7 @@ export default async function LatestEpisodes({
 									<Image
 										fill
 										className="object-cover"
-										src={anime.poster}
+										src={changeImageSize(anime.poster)}
 										alt={anime.name as string}
 										sizes="100vw"
 										priority

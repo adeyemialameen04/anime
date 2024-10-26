@@ -10,7 +10,7 @@ export async function getAnilistAnimeDetails(id: string) {
 		null,
 		{
 			next: {
-				revalidate: 3600,
+				revalidate: 0,
 			},
 		},
 	);

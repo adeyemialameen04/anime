@@ -25,7 +25,6 @@ const config: Config = {
 		extend: {
 			fontFamily: {
 				"dm-sans": ["var(--font-dm-sans)"],
-
 				"space-grotesk": ["var(--font-space-grotesk)"],
 			},
 			colors: {
