@@ -58,6 +58,13 @@ export default function EpisodesSidebar({
 	const [searchQuery, setSearchQuery] = React.useState("");
 	const [selectedVersion, setSelectedVersion] = React.useState("Sub");
 
+	// Find the active episode
+	const activeEpisode = React.useMemo(() => {
+		return episodes.find(
+			(episode) => episode.id.split("=").pop() === currentEpisodeId,
+		);
+	}, [episodes, currentEpisodeId]);
+
 	// Debounce search input to improve performance
 	const debouncedSearchQuery = React.useMemo(() => {
 		const timeoutId = setTimeout(() => searchQuery, 300);
@@ -95,6 +102,12 @@ export default function EpisodesSidebar({
 	const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
 		setSearchQuery(event.target.value);
 	};
+
+	// Generate episode title for breadcrumb
+	const episodeTitle = React.useMemo(() => {
+		if (!activeEpisode) return "Select Episode";
+		return `Episode ${activeEpisode.number}${activeEpisode.title ? `: ${activeEpisode.title}` : ""}`;
+	}, [activeEpisode]);
 
 	return (
 		<SidebarProvider>
@@ -192,7 +205,7 @@ export default function EpisodesSidebar({
 							</BreadcrumbItem>
 							<BreadcrumbSeparator className="hidden md:block" />
 							<BreadcrumbItem>
-								<BreadcrumbPage>Data Fetching</BreadcrumbPage>
+								<BreadcrumbPage>{episodeTitle}</BreadcrumbPage>
 							</BreadcrumbItem>
 						</BreadcrumbList>
 					</Breadcrumb>

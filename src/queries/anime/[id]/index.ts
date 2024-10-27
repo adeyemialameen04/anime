@@ -1,5 +1,9 @@
 import makeFetch from "@/lib/helpers/fetch";
-import type { AnilistAnime, Sourcedata } from "@/types/anime/anilist";
+import type {
+	AnilistAnime,
+	ServersData,
+	Sourcedata,
+} from "@/types/anime/anilist";
 import type { ScrapedAnimeAboutInfo } from "@/types/anime/hianime";
 import type { SuccessResponse } from "@/types/api";
 
@@ -58,7 +62,7 @@ export async function getAnilistEpisodeSources(epId: string, serverId: string) {
 }
 
 export async function getAnilistEpisodeServers(epId: string) {
-	const fetchEpisodeServers = makeFetch(
+	const fetchEpisodeServers = makeFetch<SuccessResponse<ServersData>>(
 		"aniwatch",
 		`/anilist/anime/servers/${epId}`,
 		null,
