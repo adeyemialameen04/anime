@@ -4,10 +4,6 @@ import type { ServersData, Sourcedata } from "@/types/anime/anilist";
 import {
 	MediaPlayer,
 	type MediaPlayerInstance,
-	type MediaAutoPlayEvent,
-	type MediaAutoPlayEventDetail,
-	type MediaAutoPlayFailEvent,
-	type MediaAutoPlayFailEventDetail,
 	MediaProvider,
 	Track,
 } from "@vidstack/react";
@@ -18,17 +14,22 @@ import {
 import { RemotionPoster } from "@vidstack/react/player/remotion";
 import Servers from "./servers";
 import type { EnhancedSourcedata } from "../page";
-import ToggleSettings from "./settings";
+import ToggleSettings, { type GroupedEpisode } from "./settings";
 import { Button } from "@/components/ui/button";
+import { useRouter } from "next/navigation";
 
 export default function WatchDetails({
 	sources,
 	servers,
 	allSources,
+	groupedEpisode,
+	animeId,
 }: {
 	sources: Sourcedata;
 	servers: ServersData;
 	allSources: { sub: EnhancedSourcedata[]; dub: EnhancedSourcedata[] };
+	groupedEpisode: GroupedEpisode;
+	animeId: number;
 }) {
 	const playerRef = useRef<MediaPlayerInstance>(null);
 	const settings = {
@@ -36,16 +37,15 @@ export default function WatchDetails({
 		autoPlay: true,
 		autoNext: true,
 	};
+	const router = useRouter();
 	const [currentSources, setCurrentSources] = useState<Sourcedata>(sources);
-	const [openingBtn, setOpeningBtn] = useState(false);
-	const [endingBtn, setEndingBtn] = useState(false);
 	const subtitles = currentSources.tracks.filter(
 		(track) => track.kind === "captions",
 	);
 	const [currentSourceUrl, setCurrentSourceUrl] = useState(
 		currentSources.sources[0].url,
 	);
-	const [skiptimes, setSkipTimes] = useState([
+	const skiptimes = [
 		{
 			text: "Opening",
 			startTime: currentSources.intro.start,
@@ -56,7 +56,7 @@ export default function WatchDetails({
 			startTime: currentSources.outro.start,
 			endTime: currentSources.outro.end,
 		},
-	]);
+	];
 
 	const handleServerSelect = (serverId: string, type: "sub" | "dub") => {
 		const selectedSources = allSources[type].find(
@@ -81,17 +81,6 @@ export default function WatchDetails({
 				const opButtonText = skiptimes[0]?.text || "";
 				const edButtonText = skiptimes[1]?.text || "";
 
-				setOpeningBtn(
-					opButtonText === "Opening" &&
-						currentTime > openingStart &&
-						currentTime < openingEnd,
-				);
-				setEndingBtn(
-					edButtonText === "Ending" &&
-						currentTime > endingStart &&
-						currentTime < endingEnd,
-				);
-
 				if (settings?.autoSkip) {
 					if (
 						opButtonText === "Opening" &&
@@ -112,22 +101,7 @@ export default function WatchDetails({
 				}
 			}
 		});
-	}, [skiptimes]);
-
-	function onAutoPlay(
-		{ muted }: MediaAutoPlayEventDetail,
-		nativeEvent: MediaAutoPlayEvent,
-	) {
-		const requestEvent = nativeEvent.request;
-	}
-
-	// autoplay has failed.
-	function onAutoPlayFail(
-		{ muted, error }: MediaAutoPlayFailEventDetail,
-		nativeEvent: MediaAutoPlayFailEvent,
-	) {
-		const requestEvent = nativeEvent.request;
-	}
+	});
 
 	function handleOpening() {
 		console.log("Skipping Intro");
@@ -143,18 +117,30 @@ export default function WatchDetails({
 		});
 	}
 
+	const onEnded = () => {
+		if (groupedEpisode.next) {
+			console.log("Oya next");
+			if (settings.autoNext) {
+				console.log("pls next fr");
+				router.push(
+					`/anime/watch/${animeId}?ep=${groupedEpisode.next?.episodeId}`,
+				);
+			}
+		}
+	};
+
 	return (
 		<>
 			<div className="md:container">
 				<MediaPlayer
 					playsInline
-					onAutoPlay={onAutoPlay}
-					onAutoPlayFail={onAutoPlayFail}
 					src={currentSourceUrl}
 					crossOrigin="anonymous"
 					ref={playerRef}
 					streamType="on-demand"
 					className="md:container"
+					onEnd={onEnded}
+					onEnded={onEnded}
 				>
 					<MediaProvider>
 						{subtitles.map((track) => (
@@ -189,7 +175,7 @@ export default function WatchDetails({
 				</MediaPlayer>
 			</div>
 			<div className="flex container flex-col items-start mt-2">
-				<ToggleSettings />
+				<ToggleSettings groupedEpisode={groupedEpisode} animeId={animeId} />
 				<Servers servers={servers} onServerSelect={handleServerSelect} />
 			</div>
 		</>

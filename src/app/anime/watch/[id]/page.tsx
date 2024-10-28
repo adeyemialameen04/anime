@@ -11,7 +11,8 @@ import { Skeleton } from "@/components/ui/skeleton";
 import WatchDetails from "./_components/details";
 import type { ServersData, Sourcedata } from "@/types/anime/anilist";
 import logServer from "@/lib/helpers";
-import EpisodesSidebar from "./_components/sidebar";
+import * as React from "react";
+import { getCurrentEpisode } from "@/lib/utils/anime";
 
 export interface EnhancedSourcedata extends Sourcedata {
 	serverInfo: {
@@ -92,24 +93,35 @@ export default async function AnimeDetail({
 		notFound();
 	}
 
+	const activeEpisode = animeDetails.data.episodesList.find(
+		(episode) => episode.id.split("=").pop() === ep,
+	);
+	const groupedEpisode = {
+		current: activeEpisode?.episodeId,
+		next: animeDetails.data.episodesList.find(
+			(episode) => episode.episodeId === activeEpisode?.episodeId + 1,
+		),
+		prev: animeDetails.data.episodesList.find(
+			(episode) => episode.episodeId === activeEpisode?.episodeId - 1,
+		),
+	};
+	console.log(activeEpisode);
+
 	if (!sources) {
 		throw new Error("No sources found");
 	}
 
 	return (
-		<EpisodesSidebar
-			episodes={animeDetails.data.episodesList}
-			anime={animeDetails.data}
-		>
-			<main className="py-4">
-				<Suspense fallback={<Skeleton className="h-[470px] w-[850px]" />}>
-					<WatchDetails
-						servers={servers?.data}
-						sources={sources.data}
-						allSources={allSources}
-					/>
-				</Suspense>
-			</main>
-		</EpisodesSidebar>
+		<main className="py-4">
+			<Suspense fallback={<Skeleton className="h-[470px] w-[850px]" />}>
+				<WatchDetails
+					servers={servers?.data}
+					sources={sources.data}
+					groupedEpisode={groupedEpisode}
+					allSources={allSources}
+					animeId={animeDetails.data.id}
+				/>
+			</Suspense>
+		</main>
 	);
 }

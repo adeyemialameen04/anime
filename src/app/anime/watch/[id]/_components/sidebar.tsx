@@ -1,12 +1,7 @@
 "use client";
 
 import * as React from "react";
-import {
-	Check,
-	ChevronsUpDown,
-	GalleryVerticalEnd,
-	Search,
-} from "lucide-react";
+import { Search } from "lucide-react";
 
 import {
 	Breadcrumb,
@@ -16,12 +11,6 @@ import {
 	BreadcrumbPage,
 	BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
-import {
-	DropdownMenu,
-	DropdownMenuContent,
-	DropdownMenuItem,
-	DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import {
@@ -43,6 +32,7 @@ import {
 import type { AnilistAnime, EpisodeList } from "@/types/anime/anilist";
 import truncateText from "@/lib/helpers/truncate";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { getCurrentEpisode } from "@/lib/utils/anime";
 
 export default function EpisodesSidebar({
 	episodes,
@@ -53,19 +43,11 @@ export default function EpisodesSidebar({
 	children: React.ReactNode;
 	anime: AnilistAnime;
 }) {
-	const router = useRouter();
-	const pathname = usePathname();
 	const searchParams = useSearchParams();
 	const currentEpisodeId = searchParams.get("ep");
 	const [searchQuery, setSearchQuery] = React.useState("");
-	const [selectedVersion, setSelectedVersion] = React.useState("dub");
 
-	// Find the active episode
-	const activeEpisode = React.useMemo(() => {
-		return episodes.find(
-			(episode) => episode.id.split("=").pop() === currentEpisodeId,
-		);
-	}, [episodes, currentEpisodeId]);
+	const activeEpisode = getCurrentEpisode(episodes, currentEpisodeId as string);
 
 	// Debounce search input to improve performance
 	// const debouncedSearchQuery = React.useMemo(() => {
@@ -125,48 +107,6 @@ export default function EpisodesSidebar({
 		<SidebarProvider>
 			<Sidebar className="">
 				<SidebarHeader className="pt-5">
-					{/* <SidebarMenu> */}
-					{/* 	<SidebarMenuItem> */}
-					{/* 		<DropdownMenu> */}
-					{/* 			<DropdownMenuTrigger asChild> */}
-					{/* 				<SidebarMenuButton */}
-					{/* 					size="lg" */}
-					{/* 					className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground" */}
-					{/* 				> */}
-					{/* 					<div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground"> */}
-					{/* 						<GalleryVerticalEnd className="size-4" /> */}
-					{/* 					</div> */}
-					{/* 					<div className="flex flex-col gap-0.5 leading-none"> */}
-					{/* 						<span className="font-semibold">Type</span> */}
-					{/* 						<span className="capitalize">{selectedVersion}</span> */}
-					{/* 					</div> */}
-					{/* 					<ChevronsUpDown className="ml-auto" /> */}
-					{/* 				</SidebarMenuButton> */}
-					{/* 			</DropdownMenuTrigger> */}
-					{/* 			<DropdownMenuContent */}
-					{/* 				className="w-[--radix-dropdown-menu-trigger-width]" */}
-					{/* 				align="start" */}
-					{/* 			> */}
-					{/* 				{navigationData.versions.map((version) => ( */}
-					{/* 					<DropdownMenuItem */}
-					{/* 						key={version} */}
-					{/* 						onSelect={() => { */}
-					{/* 							router.push( */}
-					{/* 								`${pathname}?${createQueryString("subOrDub", version)}`, */}
-					{/* 							); */}
-					{/* 							return setSelectedVersion(version); */}
-					{/* 						}} */}
-					{/* 					> */}
-					{/* 						{version} */}
-					{/* 						{version === selectedVersion && ( */}
-					{/* 							<Check className="ml-auto" /> */}
-					{/* 						)} */}
-					{/* 					</DropdownMenuItem> */}
-					{/* 				))} */}
-					{/* 			</DropdownMenuContent> */}
-					{/* 		</DropdownMenu> */}
-					{/* 	</SidebarMenuItem> */}
-					{/* </SidebarMenu> */}
 					<form onSubmit={(e) => e.preventDefault()}>
 						<SidebarGroup className="py-0">
 							<SidebarGroupContent className="relative">
@@ -222,7 +162,11 @@ export default function EpisodesSidebar({
 							</BreadcrumbItem>
 							<BreadcrumbSeparator className="hidden md:block" />
 							<BreadcrumbItem>
-								<BreadcrumbPage>{episodeTitle}</BreadcrumbPage>
+								<BreadcrumbPage>
+									{truncateText(episodeTitle, {
+										maxLength: 70,
+									})}
+								</BreadcrumbPage>
 							</BreadcrumbItem>
 						</BreadcrumbList>
 					</Breadcrumb>

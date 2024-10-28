@@ -9,8 +9,19 @@ import {
 } from "lucide-react";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
+import type { EpisodeList } from "@/types/anime/anilist";
 
-export default function ToggleSettings() {
+export type GroupedEpisode = {
+	current: number;
+	next?: EpisodeList;
+	prev?: EpisodeList;
+};
+
+export default function ToggleSettings({
+	groupedEpisode,
+	animeId,
+}: { groupedEpisode: GroupedEpisode; animeId: number }) {
 	const defaultValues = ["auto-skip", "auto-play"];
 	const [selectedValues, setSelectedValues] = useState<string[]>(defaultValues);
 
@@ -53,22 +64,48 @@ export default function ToggleSettings() {
 				>
 					Auto Next <ArrowBigRightDash className="h-4 w-4" />
 				</ToggleGroupItem>
-				<Button size={"sm"} className="flex items-center gap-3 md:hidden">
-					<ArrowBigLeftDash className="h-4 w-4" />
-					Prev
-				</Button>
-				<Button size={"sm"} className="flex items-center gap-3 md:hidden">
-					Next <ArrowBigRightDash className="h-4 w-4" />
-				</Button>
+				{groupedEpisode.prev && (
+					<Link
+						className="md:hidden"
+						href={`/anime/watch/${animeId}?ep=${groupedEpisode.prev?.episodeId}`}
+					>
+						<Button size={"sm"} className="flex items-center gap-3">
+							<ArrowBigLeftDash className="h-4 w-4" />
+							Prev
+						</Button>
+					</Link>
+				)}
+				{groupedEpisode.next && (
+					<Link
+						className="md:hidden"
+						href={`/anime/watch/${animeId}?ep=${groupedEpisode.next?.episodeId}`}
+					>
+						<Button size={"sm"} className="flex items-center gap-3">
+							Next <ArrowBigRightDash className="h-4 w-4" />
+						</Button>
+					</Link>
+				)}
 			</ToggleGroup>
 			<div className="items-center gap-2 hidden md:flex">
-				<Button size={"sm"} className="flex items-center gap-3">
-					<ArrowBigLeftDash className="h-4 w-4" />
-					Prev
-				</Button>
-				<Button size={"sm"} className="flex items-center gap-3">
-					Next <ArrowBigRightDash className="h-4 w-4" />
-				</Button>
+				{groupedEpisode.prev && (
+					<Link
+						href={`/anime/watch/${animeId}?ep=${groupedEpisode.prev?.episodeId}`}
+					>
+						<Button size={"sm"} className="flex items-center gap-3">
+							<ArrowBigLeftDash className="h-4 w-4" />
+							Prev
+						</Button>
+					</Link>
+				)}
+				{groupedEpisode.next && (
+					<Link
+						href={`/anime/watch/${animeId}?ep=${groupedEpisode.next?.episodeId}`}
+					>
+						<Button size={"sm"} className="flex items-center gap-3">
+							Next <ArrowBigRightDash className="h-4 w-4" />
+						</Button>
+					</Link>
+				)}
 			</div>
 		</div>
 	);

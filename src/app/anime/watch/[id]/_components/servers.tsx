@@ -62,6 +62,9 @@ export default function Servers({
 						</div>
 					</TabsContent>
 					<TabsContent value="dub">
+						<p className="italic font-space-grotesk mb-2 text-xs">
+							PS: There are no subtitles for dub servers
+						</p>
 						<div className="grid grid-cols-2 md:grid-cols-3 gap-2">
 							{servers.dub.map((server) => (
 								<Badge
