@@ -1,44 +1,90 @@
 "use client";
-import { Button } from "@/components/ui/button";
+import { useState } from "react";
 import type { ServersData } from "@/types/anime/anilist";
-import {
-	Collapsible,
-	CollapsibleTrigger,
-	CollapsibleContent,
-} from "@/components/ui/collapsible";
-import { ChevronsUpDown } from "lucide-react";
-import React from "react";
+import { Badge } from "@/components/ui/badge";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Card, CardContent } from "@/components/ui/card";
 
-export default function Servers({ servers }: { servers: ServersData }) {
-	const [isOpen, setIsOpen] = React.useState(false);
+export default function Servers({
+	servers,
+	onServerSelect,
+}: {
+	servers: ServersData;
+	onServerSelect: (serverId: string, type: "sub" | "dub") => void;
+}) {
+	const [selectedSubServer, setSelectedSubServer] = useState<string | null>(
+		null,
+	);
+	const [selectedDubServer, setSelectedDubServer] = useState<string | null>(
+		null,
+	);
+
+	const handleServerClick = (serverId: string, type: "sub" | "dub") => {
+		if (type === "sub") {
+			setSelectedSubServer(serverId);
+			setSelectedDubServer(null);
+		} else {
+			setSelectedDubServer(serverId);
+			setSelectedSubServer(null);
+		}
+		onServerSelect(serverId, type);
+	};
 
 	return (
-		<Collapsible
-			open={isOpen}
-			onOpenChange={setIsOpen}
-			className="w-[350px] space-y-2"
-		>
-			<div className="flex items-center justify-between space-x-4 px-4">
-				<h4 className="text-sm font-semibold">Available Servers</h4>
-				<CollapsibleTrigger asChild>
-					<Button variant="ghost" size="sm" className="w-9 p-0">
-						<ChevronsUpDown className="h-4 w-4" />
-						<span className="sr-only">Toggle</span>
-					</Button>
-				</CollapsibleTrigger>
-			</div>
-			<div className="rounded-md border px-4 py-3 font-mono text-sm">
-				{servers.sub[0].serverName}
-			</div>
-			<CollapsibleContent className="space-y-2">
-				<div className="rounded-md border px-4 py-3 font-mono text-sm">
-					{servers.sub.map((server) => (
-						<React.Fragment key={server.serverId}>
-							{server.serverName}
-						</React.Fragment>
-					))}
-				</div>
-			</CollapsibleContent>
-		</Collapsible>
+		<Card className="w-full max-w-2xl mt-4">
+			<CardContent className="p-6">
+				<h2 className="text-2xl font-bold mb-4">Available Servers</h2>
+				<Tabs defaultValue="sub">
+					<TabsList className="grid w-full grid-cols-2 mb-4">
+						<TabsTrigger value="sub">Sub</TabsTrigger>
+						<TabsTrigger value="dub">Dub</TabsTrigger>
+					</TabsList>
+					<TabsContent value="sub">
+						<div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+							{servers.sub.map((server) => (
+								<Badge
+									key={server.serverId}
+									variant={
+										selectedSubServer === server.serverId
+											? "default"
+											: "outline"
+									}
+									className={`justify-center py-2 cursor-pointer ${
+										selectedSubServer === server.serverId
+											? "bg-primary text-primary-foreground"
+											: ""
+									}`}
+									onClick={() => handleServerClick(server.serverId, "sub")}
+								>
+									{server.serverName}
+								</Badge>
+							))}
+						</div>
+					</TabsContent>
+					<TabsContent value="dub">
+						<div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+							{servers.dub.map((server) => (
+								<Badge
+									key={server.serverId}
+									variant={
+										selectedDubServer === server.serverId
+											? "default"
+											: "outline"
+									}
+									className={`justify-center py-2 cursor-pointer ${
+										selectedDubServer === server.serverId
+											? "bg-primary text-primary-foreground"
+											: ""
+									}`}
+									onClick={() => handleServerClick(server.serverId, "dub")}
+								>
+									{server.serverName}
+								</Badge>
+							))}
+						</div>
+					</TabsContent>
+				</Tabs>
+			</CardContent>
+		</Card>
 	);
 }

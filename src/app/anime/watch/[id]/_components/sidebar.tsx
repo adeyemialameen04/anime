@@ -42,7 +42,7 @@ import {
 } from "@/components/ui/sidebar";
 import type { AnilistAnime, EpisodeList } from "@/types/anime/anilist";
 import truncateText from "@/lib/helpers/truncate";
-import { useSearchParams } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 export default function EpisodesSidebar({
 	episodes,
@@ -53,10 +53,12 @@ export default function EpisodesSidebar({
 	children: React.ReactNode;
 	anime: AnilistAnime;
 }) {
+	const router = useRouter();
+	const pathname = usePathname();
 	const searchParams = useSearchParams();
 	const currentEpisodeId = searchParams.get("ep");
 	const [searchQuery, setSearchQuery] = React.useState("");
-	const [selectedVersion, setSelectedVersion] = React.useState("Sub");
+	const [selectedVersion, setSelectedVersion] = React.useState("dub");
 
 	// Find the active episode
 	const activeEpisode = React.useMemo(() => {
@@ -66,10 +68,10 @@ export default function EpisodesSidebar({
 	}, [episodes, currentEpisodeId]);
 
 	// Debounce search input to improve performance
-	const debouncedSearchQuery = React.useMemo(() => {
-		const timeoutId = setTimeout(() => searchQuery, 300);
-		return () => clearTimeout(timeoutId);
-	}, [searchQuery]);
+	// const debouncedSearchQuery = React.useMemo(() => {
+	// 	const timeoutId = setTimeout(() => searchQuery, 300);
+	// 	return () => clearTimeout(timeoutId);
+	// }, [searchQuery]);
 
 	// Filter episodes based on search query
 	const filteredEpisodes = React.useMemo(() => {
@@ -109,47 +111,62 @@ export default function EpisodesSidebar({
 		return `Episode ${activeEpisode.number}${activeEpisode.title ? `: ${activeEpisode.title}` : ""}`;
 	}, [activeEpisode]);
 
+	const createQueryString = React.useCallback(
+		(name: string, value: string) => {
+			const params = new URLSearchParams(searchParams.toString());
+			params.set(name, value);
+
+			return params.toString();
+		},
+		[searchParams],
+	);
+
 	return (
 		<SidebarProvider>
-			<Sidebar>
-				<SidebarHeader>
-					<SidebarMenu>
-						<SidebarMenuItem>
-							<DropdownMenu>
-								<DropdownMenuTrigger asChild>
-									<SidebarMenuButton
-										size="lg"
-										className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
-									>
-										<div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
-											<GalleryVerticalEnd className="size-4" />
-										</div>
-										<div className="flex flex-col gap-0.5 leading-none">
-											<span className="font-semibold">Type</span>
-											<span className="">v{selectedVersion}</span>
-										</div>
-										<ChevronsUpDown className="ml-auto" />
-									</SidebarMenuButton>
-								</DropdownMenuTrigger>
-								<DropdownMenuContent
-									className="w-[--radix-dropdown-menu-trigger-width]"
-									align="start"
-								>
-									{navigationData.versions.map((version) => (
-										<DropdownMenuItem
-											key={version}
-											onSelect={() => setSelectedVersion(version)}
-										>
-											v{version}{" "}
-											{version === selectedVersion && (
-												<Check className="ml-auto" />
-											)}
-										</DropdownMenuItem>
-									))}
-								</DropdownMenuContent>
-							</DropdownMenu>
-						</SidebarMenuItem>
-					</SidebarMenu>
+			<Sidebar className="">
+				<SidebarHeader className="pt-5">
+					{/* <SidebarMenu> */}
+					{/* 	<SidebarMenuItem> */}
+					{/* 		<DropdownMenu> */}
+					{/* 			<DropdownMenuTrigger asChild> */}
+					{/* 				<SidebarMenuButton */}
+					{/* 					size="lg" */}
+					{/* 					className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground" */}
+					{/* 				> */}
+					{/* 					<div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground"> */}
+					{/* 						<GalleryVerticalEnd className="size-4" /> */}
+					{/* 					</div> */}
+					{/* 					<div className="flex flex-col gap-0.5 leading-none"> */}
+					{/* 						<span className="font-semibold">Type</span> */}
+					{/* 						<span className="capitalize">{selectedVersion}</span> */}
+					{/* 					</div> */}
+					{/* 					<ChevronsUpDown className="ml-auto" /> */}
+					{/* 				</SidebarMenuButton> */}
+					{/* 			</DropdownMenuTrigger> */}
+					{/* 			<DropdownMenuContent */}
+					{/* 				className="w-[--radix-dropdown-menu-trigger-width]" */}
+					{/* 				align="start" */}
+					{/* 			> */}
+					{/* 				{navigationData.versions.map((version) => ( */}
+					{/* 					<DropdownMenuItem */}
+					{/* 						key={version} */}
+					{/* 						onSelect={() => { */}
+					{/* 							router.push( */}
+					{/* 								`${pathname}?${createQueryString("subOrDub", version)}`, */}
+					{/* 							); */}
+					{/* 							return setSelectedVersion(version); */}
+					{/* 						}} */}
+					{/* 					> */}
+					{/* 						{version} */}
+					{/* 						{version === selectedVersion && ( */}
+					{/* 							<Check className="ml-auto" /> */}
+					{/* 						)} */}
+					{/* 					</DropdownMenuItem> */}
+					{/* 				))} */}
+					{/* 			</DropdownMenuContent> */}
+					{/* 		</DropdownMenu> */}
+					{/* 	</SidebarMenuItem> */}
+					{/* </SidebarMenu> */}
 					<form onSubmit={(e) => e.preventDefault()}>
 						<SidebarGroup className="py-0">
 							<SidebarGroupContent className="relative">
@@ -168,7 +185,7 @@ export default function EpisodesSidebar({
 						</SidebarGroup>
 					</form>
 				</SidebarHeader>
-				<SidebarContent>
+				<SidebarContent className="">
 					{navigationData.navMain.map((item) => (
 						<SidebarGroup key={item.title}>
 							<SidebarGroupLabel>
