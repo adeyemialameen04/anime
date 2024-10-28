@@ -154,7 +154,7 @@ export interface Sourcedata {
 	server: number;
 }
 
-type ServerType = { serverId: string; serverName: string };
+export type ServerType = { serverId: string; serverName: string };
 
 export interface ServersData {
 	sub: ServerType[];

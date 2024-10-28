@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
-import SiteHeader from "@/_components/shared/site-header/site-header";
 import { dmSans, spaceGrotesk } from "@/lib/fonts";
 import { ThemeProvider } from "next-themes";
 

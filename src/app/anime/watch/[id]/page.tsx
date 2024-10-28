@@ -11,12 +11,20 @@ import { Skeleton } from "@/components/ui/skeleton";
 import WatchDetails from "./_components/details";
 import type { ServersData, Sourcedata } from "@/types/anime/anilist";
 import logServer from "@/lib/helpers";
+import EpisodesSidebar from "./_components/sidebar";
+
+export interface EnhancedSourcedata extends Sourcedata {
+	serverInfo: {
+		serverId: string;
+		serverName: string;
+	};
+}
 
 async function getAllSources(
 	episodeId: string,
 	servers: ServersData,
-): Promise<{ sub: Sourcedata[]; dub: Sourcedata[] }> {
-	const allSources: { sub: Sourcedata[]; dub: Sourcedata[] } = {
+): Promise<{ sub: EnhancedSourcedata[]; dub: EnhancedSourcedata[] }> {
+	const allSources: { sub: EnhancedSourcedata[]; dub: EnhancedSourcedata[] } = {
 		sub: [],
 		dub: [],
 	};
@@ -29,7 +37,19 @@ async function getAllSources(
 					episodeId,
 					server.serverId,
 				);
-				return sources?.data;
+
+				if (sources?.data) {
+					// Enhance each source with server information
+					const enhancedSource: EnhancedSourcedata = {
+						...sources.data,
+						serverInfo: {
+							serverId: server.serverId,
+							serverName: server.serverName,
+						},
+					};
+					return enhancedSource;
+				}
+				return null;
 			} catch (error) {
 				console.error(
 					`Error fetching sources for ${serverType} server ${server.serverId}:`,
@@ -41,16 +61,14 @@ async function getAllSources(
 
 		// Filter out null values from failed requests
 		const results = (await Promise.all(promises)).filter(
-			(source): source is Sourcedata => source !== null,
+			(source): source is EnhancedSourcedata => source !== null,
 		);
 		allSources[serverType] = results;
 	}
 
 	await Promise.all([fetchSourcesForType("sub"), fetchSourcesForType("dub")]);
-
 	return allSources;
 }
-
 export default async function AnimeDetail({
 	params,
 	searchParams,
@@ -79,10 +97,19 @@ export default async function AnimeDetail({
 	}
 
 	return (
-		<main className="md:container py-4">
-			<Suspense fallback={<Skeleton className="h-[470px] w-[850px]" />}>
-				<WatchDetails servers={servers?.data} sources={sources.data} />
-			</Suspense>
-		</main>
+		<EpisodesSidebar
+			episodes={animeDetails.data.episodesList}
+			anime={animeDetails.data}
+		>
+			<main className="py-4">
+				<Suspense fallback={<Skeleton className="h-[470px] w-[850px]" />}>
+					<WatchDetails
+						servers={servers?.data}
+						sources={sources.data}
+						allSources={allSources}
+					/>
+				</Suspense>
+			</main>
+		</EpisodesSidebar>
 	);
 }
