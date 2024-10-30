@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import EpisodesSidebar from "./_components/sidebar";
 import { getAnilistAnimeDetails } from "@/app/anime/dal";
+import { getEpisodesList } from "./dal";
 
 export const metadata: Metadata = {
 	title: "Create Next App",
@@ -16,16 +17,21 @@ export default async function WatchAnimeLayout({
 	params: { id: string; episodeId: string };
 }) {
 	const { id, episodeId } = await params;
+	const [data, animeDetails] = await Promise.all([
+		getEpisodesList(id),
+		getAnilistAnimeDetails(id),
+	]);
 
-	const animeDetails = await getAnilistAnimeDetails(id);
-	if (!animeDetails) {
+	console.log(data);
+
+	if (!data || !animeDetails) {
 		notFound();
 	}
 
 	return (
 		<>
 			<EpisodesSidebar
-				episodes={animeDetails.data.episodesList}
+				episodes={data.data}
 				anime={animeDetails.data}
 				currentEpisodeId={episodeId}
 			>

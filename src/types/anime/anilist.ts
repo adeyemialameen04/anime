@@ -4,9 +4,20 @@ export interface Title {
 	native: string;
 	userPreferred: string;
 }
+// export interface EpisodeList {
+// 	id: string;
+// 	episodeId: number;
+// 	title: string;
+// 	number: number;
+// }
+
 export interface EpisodeList {
 	id: string;
+	image: string;
+	imageHash: string;
 	episodeId: number;
+	createdAt: string;
+	description: string | null;
 	title: string;
 	number: number;
 }

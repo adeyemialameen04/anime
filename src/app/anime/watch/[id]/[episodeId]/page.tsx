@@ -11,112 +11,23 @@ import WatchDetails from "./_components/details";
 import type { ServersData, Sourcedata } from "@/types/anime/anilist";
 import { getAnilistAnimeDetails } from "@/app/anime/dal";
 
-export interface EnhancedSourcedata extends Sourcedata {
-	serverInfo: {
-		serverId: string;
-		serverName: string;
-	};
-}
-
-async function getAllSources(
-	episodeId: string,
-	servers: ServersData,
-): Promise<{ sub: EnhancedSourcedata[]; dub: EnhancedSourcedata[] }> {
-	const allSources: { sub: EnhancedSourcedata[]; dub: EnhancedSourcedata[] } = {
-		sub: [],
-		dub: [],
-	};
-
-	// Helper function to fetch sources for a specific server type
-	async function fetchSourcesForType(serverType: "sub" | "dub") {
-		const promises = servers[serverType].map(async (server) => {
-			try {
-				const sources = await getAnilistEpisodeSources(
-					episodeId,
-					server.serverId,
-				);
-
-				if (sources?.data?.sources && sources.data.sources.length > 0) {
-					// Enhance each source with server information
-					const enhancedSource: EnhancedSourcedata = {
-						...sources.data,
-						serverInfo: {
-							serverId: server.serverId,
-							serverName: server.serverName,
-						},
-					};
-					return enhancedSource;
-				}
-				return null;
-			} catch (error) {
-				console.error(
-					`Error fetching sources for ${serverType} server ${server.serverId}:`,
-					error,
-				);
-				return null;
-			}
-		});
-
-		// Filter out null values from failed requests
-		const results = (await Promise.all(promises)).filter(
-			(source): source is EnhancedSourcedata => source !== null,
-		);
-		allSources[serverType] = results;
-	}
-
-	await Promise.all([fetchSourcesForType("sub"), fetchSourcesForType("dub")]);
-	return allSources;
-}
-
 export default async function AnimeDetail({
 	params,
 }: {
 	params: { id: string; episodeId: string };
 }) {
 	const { id, episodeId: ep } = await params;
-	const servers = await getAnilistEpisodeServers(ep as string);
-	if (!servers) {
-		throw new Error("No servers found");
-	}
-	const allSources = await getAllSources(ep as string, servers.data);
-
-	const sources = await getAnilistEpisodeSources(
-		ep as string,
-		servers.data.sub[0].serverId,
-	);
-
-	const animeDetails = await getAnilistAnimeDetails(id);
-	if (!animeDetails) {
-		notFound();
-	}
-
-	const activeEpisode = animeDetails.data.episodesList.find(
-		(episode) => episode.id.split("=").pop() === ep,
-	);
-	const groupedEpisode = {
-		current: activeEpisode?.episodeId,
-		next: animeDetails.data.episodesList.find(
-			(episode) => episode.episodeId === activeEpisode?.episodeId + 1,
-		),
-		prev: animeDetails.data.episodesList.find(
-			(episode) => episode.episodeId === activeEpisode?.episodeId - 1,
-		),
-	};
-
-	if (!sources) {
-		throw new Error("No sources found");
-	}
 
 	return (
 		<main className="py-4">
 			<Suspense fallback={<Skeleton className="h-[470px] w-[850px]" />}>
-				<WatchDetails
-					servers={servers?.data}
-					sources={sources.data}
-					groupedEpisode={groupedEpisode}
-					allSources={allSources}
-					animeId={animeDetails.data.id}
-				/>
+				{/* <WatchDetails */}
+				{/* 	servers={servers?.data} */}
+				{/* 	sources={sources.data} */}
+				{/* 	groupedEpisode={groupedEpisode} */}
+				{/* 	allSources={allSources} */}
+				{/* 	animeId={animeDetails.data.id} */}
+				{/* /> */}
 			</Suspense>
 		</main>
 	);

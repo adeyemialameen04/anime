@@ -3,8 +3,8 @@ import { notFound } from "next/navigation";
 import Hero from "./_components/hero";
 import AnimeDetailsTab from "./_components/details";
 import Back from "./_components/back";
-import { getAnilistAnimeDetails } from "../dal";
 import axios from "axios";
+import { getAnilistAnimeDetails } from "../../dal";
 // import type { SuccessResponse } from "@/types/api";
 // import type { ScrapedAnimeAboutInfo } from "@/types/anime/hianime";
 
