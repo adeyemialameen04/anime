@@ -1,4 +1,3 @@
-"use client";
 import { useState } from "react";
 import type { ServersData } from "@/types/anime/anilist";
 import { Badge } from "@/components/ui/badge";

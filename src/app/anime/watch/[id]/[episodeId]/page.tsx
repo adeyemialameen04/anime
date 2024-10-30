@@ -1,5 +1,4 @@
 import {
-	getAnilistAnimeDetails,
 	getAnilistEpisodeServers,
 	getAnilistEpisodeSources,
 } from "@/queries/anime/[id]";
@@ -10,9 +9,7 @@ import { Suspense } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import WatchDetails from "./_components/details";
 import type { ServersData, Sourcedata } from "@/types/anime/anilist";
-import logServer from "@/lib/helpers";
-import * as React from "react";
-import { getCurrentEpisode } from "@/lib/utils/anime";
+import { getAnilistAnimeDetails } from "@/app/anime/dal";
 
 export interface EnhancedSourcedata extends Sourcedata {
 	serverInfo: {
@@ -39,7 +36,7 @@ async function getAllSources(
 					server.serverId,
 				);
 
-				if (sources?.data) {
+				if (sources?.data?.sources && sources.data.sources.length > 0) {
 					// Enhance each source with server information
 					const enhancedSource: EnhancedSourcedata = {
 						...sources.data,
@@ -70,18 +67,18 @@ async function getAllSources(
 	await Promise.all([fetchSourcesForType("sub"), fetchSourcesForType("dub")]);
 	return allSources;
 }
+
 export default async function AnimeDetail({
 	params,
-	searchParams,
-}: { params: { id: string }; searchParams: { ep?: string } }) {
-	const { id } = await params;
-	const { ep } = await searchParams;
+}: {
+	params: { id: string; episodeId: string };
+}) {
+	const { id, episodeId: ep } = await params;
 	const servers = await getAnilistEpisodeServers(ep as string);
 	if (!servers) {
 		throw new Error("No servers found");
 	}
 	const allSources = await getAllSources(ep as string, servers.data);
-	logServer(allSources);
 
 	const sources = await getAnilistEpisodeSources(
 		ep as string,
@@ -105,7 +102,6 @@ export default async function AnimeDetail({
 			(episode) => episode.episodeId === activeEpisode?.episodeId - 1,
 		),
 	};
-	console.log(activeEpisode);
 
 	if (!sources) {
 		throw new Error("No sources found");

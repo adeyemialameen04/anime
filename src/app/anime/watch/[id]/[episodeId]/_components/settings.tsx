@@ -1,6 +1,3 @@
-"use client";
-
-import { useState } from "react";
 import {
 	ArrowBigRightDash,
 	FastForward,
@@ -11,6 +8,8 @@ import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import type { EpisodeList } from "@/types/anime/anilist";
+import type { PlayerSettings } from "./details";
+import { saveSettings } from "@/lib/helpers/anime/settings";
 
 export type GroupedEpisode = {
 	current: number;
@@ -21,13 +20,31 @@ export type GroupedEpisode = {
 export default function ToggleSettings({
 	groupedEpisode,
 	animeId,
-}: { groupedEpisode: GroupedEpisode; animeId: number }) {
-	const defaultValues = ["auto-skip", "auto-play"];
-	const [selectedValues, setSelectedValues] = useState<string[]>(defaultValues);
-
+	settings,
+	setSettings,
+}: {
+	groupedEpisode: GroupedEpisode;
+	animeId: number;
+	settings: PlayerSettings;
+	setSettings: React.Dispatch<React.SetStateAction<PlayerSettings>>;
+}) {
 	const handleValueChange = (values: string[]) => {
-		setSelectedValues(values);
+		setSettings({
+			autoSkip: values.includes("auto-skip"),
+			autoPlay: values.includes("auto-play"),
+			autoNext: values.includes("auto-next"),
+		});
+
+		saveSettings({
+			autoSkip: values.includes("auto-skip"),
+			autoPlay: values.includes("auto-play"),
+			autoNext: values.includes("auto-next"),
+		});
 	};
+
+	const selectedValues = Object.entries(settings)
+		.filter(([_, value]) => value)
+		.map(([key]) => key.replace(/([A-Z])/g, "-$1").toLowerCase());
 
 	return (
 		<div className="flex flex-col gap-3 sm:flex-row justify-between w-full">

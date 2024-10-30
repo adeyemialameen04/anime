@@ -31,22 +31,22 @@ import {
 } from "@/components/ui/sidebar";
 import type { AnilistAnime, EpisodeList } from "@/types/anime/anilist";
 import truncateText from "@/lib/helpers/truncate";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { getCurrentEpisode } from "@/lib/utils/anime";
 
 export default function EpisodesSidebar({
 	episodes,
 	children,
 	anime,
+	currentEpisodeId,
 }: {
 	episodes: EpisodeList[];
 	children: React.ReactNode;
 	anime: AnilistAnime;
+	currentEpisodeId: string;
 }) {
 	const searchParams = useSearchParams();
-	const currentEpisodeId = searchParams.get("ep");
 	const [searchQuery, setSearchQuery] = React.useState("");
-
 	const activeEpisode = getCurrentEpisode(episodes, currentEpisodeId as string);
 
 	// Debounce search input to improve performance
@@ -75,7 +75,7 @@ export default function EpisodesSidebar({
 				url: "#",
 				items: filteredEpisodes.map((episode) => ({
 					title: `${episode.number}. ${truncateText(episode.title, { maxLength: 30 })}`,
-					url: `/anime/watch/${anime.id}?ep=${episode.id.split("=").pop()}`,
+					url: `/anime/watch/${anime.id}/${episode.id.split("=").pop()}`,
 					isActive: episode.id.split("=").pop() === currentEpisodeId,
 				})),
 			},
@@ -104,7 +104,7 @@ export default function EpisodesSidebar({
 	);
 
 	return (
-		<SidebarProvider>
+		<SidebarProvider defaultOpen={false}>
 			<Sidebar className="">
 				<SidebarHeader className="pt-5">
 					<form onSubmit={(e) => e.preventDefault()}>

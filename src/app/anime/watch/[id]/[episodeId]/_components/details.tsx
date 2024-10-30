@@ -1,4 +1,5 @@
 "use client";
+
 import { useState, useEffect, useRef } from "react";
 import type { ServersData, Sourcedata } from "@/types/anime/anilist";
 import {
@@ -17,6 +18,13 @@ import type { EnhancedSourcedata } from "../page";
 import ToggleSettings, { type GroupedEpisode } from "./settings";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
+import { getSettings } from "@/lib/helpers/anime/settings";
+
+export type PlayerSettings = {
+	autoSkip: boolean;
+	autoPlay: boolean;
+	autoNext: boolean;
+};
 
 export default function WatchDetails({
 	sources,
@@ -32,19 +40,21 @@ export default function WatchDetails({
 	animeId: number;
 }) {
 	const playerRef = useRef<MediaPlayerInstance>(null);
-	const settings = {
-		autoSkip: true,
-		autoPlay: true,
-		autoNext: true,
-	};
 	const router = useRouter();
 	const [currentSources, setCurrentSources] = useState<Sourcedata>(sources);
-	const subtitles = currentSources.tracks.filter(
-		(track) => track.kind === "captions",
-	);
 	const [currentSourceUrl, setCurrentSourceUrl] = useState(
 		currentSources.sources[0].url,
 	);
+	const [settings, setSettings] = useState<PlayerSettings>(
+		getSettings() ?? {
+			autoSkip: false,
+		},
+	);
+
+	const subtitles = currentSources.tracks.filter(
+		(track) => track.kind === "captions",
+	);
+
 	const skiptimes = [
 		{
 			text: "Opening",
@@ -62,13 +72,13 @@ export default function WatchDetails({
 		const selectedSources = allSources[type].find(
 			(source) => source.serverInfo.serverId === serverId,
 		);
-		console.log(selectedSources, serverId, type);
 		if (selectedSources) {
 			setCurrentSources(selectedSources);
 			setCurrentSourceUrl(selectedSources.sources[0].url);
 		}
 	};
 
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	useEffect(() => {
 		playerRef.current?.subscribe(({ currentTime }) => {
 			if (skiptimes && skiptimes.length > 0) {
@@ -81,7 +91,7 @@ export default function WatchDetails({
 				const opButtonText = skiptimes[0]?.text || "";
 				const edButtonText = skiptimes[1]?.text || "";
 
-				if (settings?.autoSkip) {
+				if (settings.autoSkip) {
 					if (
 						opButtonText === "Opening" &&
 						currentTime > openingStart &&
@@ -101,7 +111,7 @@ export default function WatchDetails({
 				}
 			}
 		});
-	});
+	}, [settings.autoSkip]);
 
 	function handleOpening() {
 		console.log("Skipping Intro");
@@ -119,9 +129,7 @@ export default function WatchDetails({
 
 	const onEnded = () => {
 		if (groupedEpisode.next) {
-			console.log("Oya next");
 			if (settings.autoNext) {
-				console.log("pls next fr");
 				router.push(
 					`/anime/watch/${animeId}?ep=${groupedEpisode.next?.episodeId}`,
 				);
@@ -134,25 +142,27 @@ export default function WatchDetails({
 			<div className="md:container">
 				<MediaPlayer
 					playsInline
-					src={currentSourceUrl}
+					// src={currentSourceUrl}
+					src={
+						"https://www088.anzeat.pro/streamhls/0b594d900f47daabc194844092384914/ep.1.1703914189.1080.m3u8"
+					}
 					crossOrigin="anonymous"
 					ref={playerRef}
 					streamType="on-demand"
-					className="md:container"
 					onEnd={onEnded}
 					onEnded={onEnded}
 				>
 					<MediaProvider>
-						{subtitles.map((track) => (
-							<Track
-								src={track.file}
-								label={track.label}
-								lang=""
-								kind="subtitles"
-								key={track.label}
-								default={track.label?.toLowerCase() === "english"}
-							/>
-						))}
+						{/* {subtitles.map((track) => ( */}
+						{/* 	<Track */}
+						{/* 		src={track.file} */}
+						{/* 		label={track.label} */}
+						{/* 		lang="" */}
+						{/* 		kind="subtitles" */}
+						{/* 		key={track.label} */}
+						{/* 		default={track.label?.toLowerCase() === "english"} */}
+						{/* 	/> */}
+						{/* ))} */}
 						<RemotionPoster className="vds-poster" frame={10} />
 					</MediaProvider>
 					<DefaultVideoLayout icons={defaultLayoutIcons} />
@@ -175,8 +185,13 @@ export default function WatchDetails({
 				</MediaPlayer>
 			</div>
 			<div className="flex container flex-col items-start mt-2">
-				<ToggleSettings groupedEpisode={groupedEpisode} animeId={animeId} />
-				<Servers servers={servers} onServerSelect={handleServerSelect} />
+				<ToggleSettings
+					groupedEpisode={groupedEpisode}
+					animeId={animeId}
+					settings={settings}
+					setSettings={setSettings}
+				/>
+				{/* <Servers servers={servers} onServerSelect={handleServerSelect} /> */}
 			</div>
 		</>
 	);

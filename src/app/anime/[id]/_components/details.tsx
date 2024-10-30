@@ -4,7 +4,6 @@ import AnimeCard from "./card";
 
 export default async function AnimeDetailsTab({
 	anime,
-	page,
 }: { anime: AnilistAnime; page: number }) {
 	const tabs = ["relations", "recommendations"];
 	const recommendations = anime.recommendations;

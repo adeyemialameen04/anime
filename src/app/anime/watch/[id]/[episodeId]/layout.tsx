@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
-import EpisodesSidebar from "./_components/sidebar";
-import { getAnilistAnimeDetails } from "@/queries/anime/[id]";
 import { notFound } from "next/navigation";
+import EpisodesSidebar from "./_components/sidebar";
+import { getAnilistAnimeDetails } from "@/app/anime/dal";
 
 export const metadata: Metadata = {
 	title: "Create Next App",
@@ -13,9 +13,9 @@ export default async function WatchAnimeLayout({
 	params,
 }: {
 	children: React.ReactNode;
-	params: { id: string };
+	params: { id: string; episodeId: string };
 }) {
-	const { id } = await params;
+	const { id, episodeId } = await params;
 
 	const animeDetails = await getAnilistAnimeDetails(id);
 	if (!animeDetails) {
@@ -27,6 +27,7 @@ export default async function WatchAnimeLayout({
 			<EpisodesSidebar
 				episodes={animeDetails.data.episodesList}
 				anime={animeDetails.data}
+				currentEpisodeId={episodeId}
 			>
 				{children}
 			</EpisodesSidebar>
