@@ -5,7 +5,7 @@ import type { SuccessResponse } from "@/types/api";
 export async function getAnilistAnimeDetails(id: string) {
 	const fetchAnimeDetails = makeFetch<SuccessResponse<AnilistAnime>>(
 		"aniwatch",
-		`/anilist/anime/${id}`,
+		`/anilist/anime/info/${id}`,
 		null,
 		{
 			next: {
