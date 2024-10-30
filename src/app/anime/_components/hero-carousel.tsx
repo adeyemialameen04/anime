@@ -9,10 +9,12 @@ import {
 	CarouselPrevious,
 } from "@/components/ui/carousel";
 import Autoplay from "embla-carousel-autoplay";
+import type { BaseAnilistAnime } from "@/types/anime/anilist";
 
 export default function HeroCarousel({
 	spotlight,
-}: { spotlight: SpotlightAnime[] }) {
+	animes,
+}: { spotlight: SpotlightAnime[]; animes: BaseAnilistAnime[] }) {
 	return (
 		<div className="py-7 md:container">
 			<Carousel
@@ -28,7 +30,7 @@ export default function HeroCarousel({
 				}}
 			>
 				<CarouselContent>
-					{spotlight.map((anime) => (
+					{animes.map((anime) => (
 						<CarouselItem key={anime.id} className="overflow-hidden">
 							<HeroItem anime={anime} />
 						</CarouselItem>

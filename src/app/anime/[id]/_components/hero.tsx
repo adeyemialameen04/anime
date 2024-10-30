@@ -68,13 +68,16 @@ export default function Hero({
 
 						<article className="flex w-full flex-col gap-3 pt-3 md:w-2/3">
 							<div className="flex gap-3">
-								<Link
-									href={`/anime/watch/${anime.id}?ep=${anime.episodesList[0].episodeId}`}
-								>
-									<Button className="max-w-40">
-										<Play className="h-4 w-4" /> Watch
-									</Button>
-								</Link>
+								{anime.episodesList && (
+									<Link
+										href={`/anime/watch/${anime.id}?ep=${anime.episodesList[0].episodeId}`}
+									>
+										<Button className="max-w-40">
+											<Play className="h-4 w-4" /> Watch
+										</Button>
+									</Link>
+								)}
+
 								<Button variant={"outline"}>
 									<PlusCircle className="h-4 w-4" />
 									Add to List
@@ -98,7 +101,7 @@ export default function Hero({
 								<Badge>{anime.format}</Badge>
 							</div>
 							<h3 className="text-2xl font-semibold font-space-grotesk">
-								{anime.title.userPreferred}
+								{anime.title.english || anime.title.romaji}
 							</h3>
 							<TruncatedDescription CHAR_LIMIT={400} text={anime.description} />
 						</article>

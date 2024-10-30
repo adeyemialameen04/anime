@@ -11,7 +11,7 @@ export interface EpisodeList {
 	number: number;
 }
 
-export interface AnilistAnime {
+export interface BaseAnilistAnime {
 	id: number;
 	idMal: number;
 	title: {
@@ -26,33 +26,36 @@ export interface AnilistAnime {
 		medium: string;
 		color: string;
 	};
-	format: string;
-	description: string;
+	bannerImage: string;
+	episodes: number;
+	status: string;
+	duration: number;
 	genres: string[];
 	season: string;
-	episodes: number;
+	format: string;
+	popularity: number;
+	averageScore: number;
+	description: string;
 	nextAiringEpisode: {
 		id: number;
 		timeUntilAiring: number;
 		airingAt: number;
 		episode: number;
 	};
-	status: string;
-	duration: number;
 	seasonYear: number;
-	bannerImage: string;
 	favourites: number;
-	popularity: number;
-	averageScore: number;
-	trailer: {
-		id: number;
-		site: string;
-		thumbnail: string;
-	};
 	startDate: {
 		year: number;
 		month: number;
 		day: number;
+	};
+}
+
+export interface AnilistAnime extends BaseAnilistAnime {
+	trailer: {
+		id: number;
+		site: string;
+		thumbnail: string;
 	};
 	countryOfOrigin: string;
 	recommendations: {

@@ -22,6 +22,20 @@ const config: Config = {
 				"2xl": "1400px",
 			},
 		},
+		"container-none": {
+			center: true,
+			padding: {
+				DEFAULT: "5rem",
+				sm: "1.5rem",
+				md: "2rem",
+				lg: "2.5rem",
+				xl: "3rem",
+				"2xl": "4rem",
+			},
+			screens: {
+				"2xl": "1400px",
+			},
+		},
 		extend: {
 			fontFamily: {
 				"dm-sans": ["var(--font-dm-sans)"],
