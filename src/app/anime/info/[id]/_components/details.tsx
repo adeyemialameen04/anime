@@ -1,39 +1,58 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { AnilistAnime } from "@/types/anime/anilist";
 import AnimeCard from "./card";
+import { cn } from "@/lib/utils";
 
 export default async function AnimeDetailsTab({
 	anime,
 }: { anime: AnilistAnime; page: number }) {
-	const tabs = ["relations", "recommendations"];
-	const recommendations = anime.recommendations;
-	const relations = anime.relations;
+	const anilist = anime.anilist;
+	const hianime = anime.hianime;
+	const tabs = [
+		{
+			title: "seasons",
+			data: hianime.seasons,
+		},
+		{
+			title: "related",
+			data: hianime.relatedAnimes,
+		},
+		{
+			title: "recommendations",
+			data: hianime.recommendedAnimes,
+		},
+	];
+	console.log(tabs[0].data);
 
 	return (
-		<Tabs defaultValue={tabs[0]} className="max-w-5xl container">
+		<Tabs
+			defaultValue={tabs[0].data.length > 0 ? tabs[0].title : tabs[1].title}
+			className="max-w-5xl container"
+		>
 			<TabsList className="flex-wrap h-auto">
 				{tabs.map((tab) => (
-					<TabsTrigger value={tab} key={tab} className="capitalize">
-						{tab}
+					<TabsTrigger
+						value={tab.title}
+						key={tab.title}
+						className={cn("capitalize", tab.data.length === 0 && "hidden")}
+					>
+						{tab.title}
 					</TabsTrigger>
 				))}
 			</TabsList>
-			<TabsContent
-				value="recommendations"
-				className="mt-4 grid grid-cols-2 md:grid-cols-3 gap-4"
-			>
-				{recommendations.map((anime, index) => (
-					<AnimeCard anime={anime} key={`${anime.id}-${index}`} />
-				))}
-			</TabsContent>
-			<TabsContent
-				value="relations"
-				className="mt-4 grid grid-cols-2 md:grid-cols-3 gap-4"
-			>
-				{relations.map((anime) => (
-					<AnimeCard anime={anime} key={anime.id} />
-				))}
-			</TabsContent>
+			{tabs.map((tab) => (
+				<TabsContent
+					value={tab.title}
+					key={tab.title}
+					className="mt-4 grid grid-cols-2 md:grid-cols-3 gap-4"
+				>
+					{[
+						...new Map(tab.data.map((anime) => [anime.id, anime])).values(),
+					].map((anime, index) => (
+						<AnimeCard anime={anime} key={`${anime.id}-${index}`} />
+					))}
+				</TabsContent>
+			))}
 		</Tabs>
 	);
 }

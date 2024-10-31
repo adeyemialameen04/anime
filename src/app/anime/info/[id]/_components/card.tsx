@@ -1,25 +1,26 @@
 import { Badge } from "@/components/ui/badge";
 import { CardContent, CardHeader, Card } from "@/components/ui/card";
+import changeImageSize from "@/lib/helpers/sizes";
 import truncateText from "@/lib/helpers/truncate";
 import Image from "next/image";
 import Link from "next/link";
 
-export default function AnimeCard({ anime }: { anime: any }) {
+export default function AnimeCard({ anime, sm }: { anime: any; sm?: boolean }) {
 	return (
-		<Link href={`/anime/${anime.id}`}>
+		<Link href={`/anime/info/${anime.id}`}>
 			<Card className="relative h-[200px] overflow-hidden">
 				<Image
-					src={anime.coverImage.extraLarge as string}
-					alt={anime.title.userPreferred}
+					src={changeImageSize(anime.poster as string, sm)}
+					alt={anime.name}
 					className="object-cover"
 					fill
 				/>
-				<Badge className="absolute right-0">{anime.format}</Badge>
+				{/* <Badge className="absolute right-0">{anime.format}</Badge> */}
 				<CardContent className="gradient_text text-white p-0">
 					<CardHeader className="p-4 font-space-grotesk flex items-center justify-between flex-row font-semibold">
-						{truncateText(anime.title.userPreferred, { maxLength: 25 })}
-						{anime.meanScore && (
-							<Badge variant={"default"}>{anime.meanScore / 10}</Badge>
+						{truncateText(anime.name, { maxLength: 25 })}
+						{anime.episodes && (
+							<Badge variant={"default"}>{anime.episodes.sub}</Badge>
 						)}
 					</CardHeader>
 				</CardContent>

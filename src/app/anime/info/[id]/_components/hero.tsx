@@ -6,19 +6,29 @@ import TruncatedDescription from "./truncated-description";
 import Link from "next/link";
 import { slugify } from "@/lib/helpers/slugify";
 import { Badge } from "@/components/ui/badge";
+import { defaultCovers } from "@/data/cover";
+import {
+	Tooltip,
+	TooltipContent,
+	TooltipProvider,
+	TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 export default function Hero({
 	anime,
 }: {
-	anime: AnilistAnime;
+	anime: any;
 }) {
+	const anilist = anime.anilist;
+	const hianime = anime.hianime;
+
 	return (
 		<div className="relative">
 			<div className="h-[40dvh] md:h-[30dvh] w-full overflow-hidden border bg-muted shadow md:rounded-lg lg:h-[55dvh]">
 				<div
 					style={{
 						// backgroundImage: `url(${changeImageSize(anime.anime.info.poster)})`,
-						backgroundImage: `url(${anime.bannerImage})`,
+						backgroundImage: `url(${anilist.bannerImage ?? defaultCovers[0]})`,
 						backgroundSize: "cover",
 						backgroundPosition: "center",
 						backgroundRepeat: "no-repeat",
@@ -33,15 +43,17 @@ export default function Hero({
 					<main className="flex flex-col gap-4 md:flex-row">
 						<aside className="transform -translate-y-24 md:-translate-y-32 w-full space-y-2 md:w-1/3">
 							<div className="relative aspect-[2/3] w-full overflow-hidden rounded-lg border bg-muted shadow">
-								{anime.coverImage ? (
+								{anime.anilist.coverImage ? (
 									<Image
-										alt={`Poster for ${anime.title || "anime"}`}
+										alt={`Poster for ${hianime.title || "anime"}`}
 										fill
 										className="object-cover"
 										loading="lazy"
 										sizes="(max-width: 768px) 100vw, 33vw"
 										// src={changeImageSize(animeInfo.poster)}
-										src={anime.coverImage.extraLarge || anime.coverImage.large}
+										src={
+											anilist.coverImage.extraLarge || anilist.coverImage.large
+										}
 									/>
 								) : (
 									<div className="flex h-full items-center justify-center">
@@ -49,11 +61,11 @@ export default function Hero({
 									</div>
 								)}
 							</div>
-							{anime.trailer && (
+							{anime.anilist.trailer && (
 								<a
 									href={
-										anime.trailer.site === "youtube"
-											? `https://www.youtube.com/watch?v=${anime.trailer.id}`
+										anilist.trailer.site === "youtube"
+											? `https://www.youtube.com/watch?v=${anilist.trailer.id}`
 											: ""
 									}
 									target="_blank"
@@ -68,9 +80,9 @@ export default function Hero({
 
 						<article className="flex w-full flex-col gap-3 pt-3 md:w-2/3">
 							<div className="flex gap-3">
-								{anime.episodesList && (
+								{anime.episodes && (
 									<Link
-										href={`/anime/watch/${anime.id}?ep=${anime.episodesList[0].episodeId}`}
+										href={`/anime/watch/${hianime.anime.info.id}/${anime.episodes[0].episodeId}`}
 									>
 										<Button className="max-w-40">
 											<Play className="h-4 w-4" /> Watch
@@ -85,25 +97,47 @@ export default function Hero({
 							</div>
 
 							<div className="flex gap-3 flex-wrap">
-								{anime.genres.map((genre) => (
+								{hianime.anime.moreInfo.genres.map((genre) => (
 									<Link href={`/anime/genre/${slugify(genre)}`} key={genre}>
 										<Badge variant={"outline"}>{genre}</Badge>
 									</Link>
 								))}
 								<Badge>
-									{anime.status.toLowerCase() === "releasing"
+									{hianime.anime.moreInfo.status.toLowerCase() ===
+									"currently airing"
 										? "Ongoing"
 										: "Completed"}
 								</Badge>
-								{anime.episodes && (
-									<Badge variant={"secondary"}>{anime.episodes}</Badge>
+								{hianime.anime.info.stats.episodes && (
+									<Badge variant={"secondary"}>
+										{hianime.anime.info.stats.episodes.sub}
+									</Badge>
 								)}
-								<Badge>{anime.format}</Badge>
+								<Badge>{hianime.anime.info.stats.type}</Badge>
+								<TooltipProvider>
+									<Tooltip>
+										<TooltipTrigger asChild>
+											<Badge variant={"outline"}>
+												{hianime.anime.moreInfo.studios}
+											</Badge>
+										</TooltipTrigger>
+										<TooltipContent>
+											<p>Studios</p>
+										</TooltipContent>
+									</Tooltip>
+								</TooltipProvider>
 							</div>
 							<h3 className="text-2xl font-semibold font-space-grotesk">
-								{anime.title.english || anime.title.romaji}
+								{anilist.title.english || anilist.title.romaji}
 							</h3>
-							<TruncatedDescription CHAR_LIMIT={400} text={anime.description} />
+							<TruncatedDescription
+								CHAR_LIMIT={400}
+								text={
+									anilist.format === "MANGA"
+										? hianime.anime.info.description
+										: anilist.description
+								}
+							/>
 						</article>
 					</main>
 				</div>

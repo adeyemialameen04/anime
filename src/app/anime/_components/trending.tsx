@@ -23,7 +23,7 @@ export default async function Trending({
 					const title = anime.title as ITitle;
 
 					return (
-						<Link href={`/anime/${anime.id}`} key={anime.id}>
+						<Link href={`/anime/info/${anime.id}`} key={anime.id}>
 							<Card className="overflow-hidden">
 								<div className="relative flex aspect-video w-full items-center justify-center overflow-hidden bg-background/50 shadow">
 									{anime.cover ? (

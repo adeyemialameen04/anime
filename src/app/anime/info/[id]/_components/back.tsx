@@ -9,7 +9,7 @@ export default function Back() {
 		<div className="container md:container-none">
 			<Button
 				variant={"outline"}
-				onClick={() => router.back()}
+				onClick={() => router.push("/anime")}
 				className="rounded-none mb-4"
 				size={"lg"}
 			>
