@@ -13,7 +13,7 @@ export default async function LatestEpisodes({
 		<TabsContent value="latest episodes">
 			<div className="pt-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
 				{latest_episodes.map((anime) => (
-					<Link href={`/anime/${anime.id}`} key={anime.id}>
+					<Link href={`/anime/info/${anime.id}`} key={anime.id}>
 						<Card className="overflow-hidden">
 							<div className="relative flex aspect-video w-full items-center justify-center overflow-hidden bg-background/50 shadow">
 								{anime.poster ? (
@@ -32,7 +32,7 @@ export default async function LatestEpisodes({
 							</div>
 							<CardContent className="mt-4">
 								<CardTitle className="font-space-grotesk capitalize">
-									{anime.name}
+									{anime.name} {anime.type}
 								</CardTitle>
 								{/* <CardDescription></CardDescription> */}
 							</CardContent>

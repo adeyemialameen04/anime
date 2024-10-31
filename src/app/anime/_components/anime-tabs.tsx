@@ -13,7 +13,7 @@ export default function AnimeTabs({
 		{ title: "Latest Episodes", data: latest_episodes },
 	];
 	return (
-		<Tabs className="container" defaultValue="trending">
+		<Tabs className="container" defaultValue={tabs[1].title.toLowerCase()}>
 			<TabsList>
 				{tabs.map((tab) => (
 					<TabsTrigger key={tab.title} value={tab.title.toLowerCase()}>

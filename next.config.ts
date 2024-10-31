@@ -12,6 +12,11 @@ const nextConfig: NextConfig = {
 			},
 			{
 				protocol: "https",
+				hostname: "i.animepahe.ru",
+				port: "",
+			},
+			{
+				protocol: "https",
 				hostname: "media.kitsu.app",
 				port: "",
 				pathname: "/episodes/**",

@@ -1,5 +1,6 @@
 import makeFetch from "@/lib/helpers/fetch";
 import type { AnilistAnime, BaseAnilistAnime } from "@/types/anime/anilist";
+import { ScrapedAnimeAboutInfo } from "@/types/anime/hianime";
 import type { SuccessResponse } from "@/types/api";
 
 export async function getAnilistAnimeDetails(id: string) {
@@ -38,6 +39,26 @@ export async function getTop100() {
 		return await fetchAnimeDetails();
 	} catch (err) {
 		console.error("Error fetching top 100:", err);
+		return undefined;
+	}
+}
+
+export async function getHiAnimeDetails(id: string) {
+	const fetchAnimeDetails = makeFetch(
+		"aniwatch",
+		`/hianime/anime/info/${id}`,
+		null,
+		{
+			next: {
+				revalidate: 0,
+			},
+		},
+	);
+
+	try {
+		return await fetchAnimeDetails();
+	} catch (err) {
+		console.error("Error fetching home page:", err);
 		return undefined;
 	}
 }

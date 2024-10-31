@@ -4,7 +4,7 @@ import Hero from "./_components/hero";
 import AnimeDetailsTab from "./_components/details";
 import Back from "./_components/back";
 import axios from "axios";
-import { getAnilistAnimeDetails } from "../../dal";
+import { getAnilistAnimeDetails, getHiAnimeDetails } from "../../dal";
 // import type { SuccessResponse } from "@/types/api";
 // import type { ScrapedAnimeAboutInfo } from "@/types/anime/hianime";
 
@@ -35,18 +35,8 @@ export default async function AnimeDetail({
 }: { params: { id: string }; searchParams: { page?: string } }) {
 	const { id } = await params;
 	const { page } = await searchParams;
-	const lol = await fetchAnifyEpisodes(id);
-	console.log(lol);
 
-	const animeDetails = await getAnilistAnimeDetails(id);
-	// let animeDetails:
-	// 	| SuccessResponse<IAnimeInfo | ScrapedAnimeAboutInfo>
-	// 	| undefined;
-	// if (!Number.isNaN(Number(id))) {
-	// 	animeDetails = await getAnilistAnimeDetails(id);
-	// } else {
-	// 	animeDetails = await getAniwatchAnimeDetails(id);
-	// }
+	const animeDetails = await getHiAnimeDetails(id);
 
 	if (!animeDetails) {
 		notFound();
@@ -56,7 +46,7 @@ export default async function AnimeDetail({
 		<main className="md:container py-4">
 			<Back />
 			<Hero anime={animeDetails?.data} />
-			<AnimeDetailsTab anime={animeDetails?.data} page={Number(page || "1")} />
+			<AnimeDetailsTab anime={animeDetails?.data} />
 		</main>
 	);
 }

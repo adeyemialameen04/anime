@@ -22,8 +22,6 @@ export default async function WatchAnimeLayout({
 		getAnilistAnimeDetails(id),
 	]);
 
-	console.log(data);
-
 	if (!data || !animeDetails) {
 		notFound();
 	}
