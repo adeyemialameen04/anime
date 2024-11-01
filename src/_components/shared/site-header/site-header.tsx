@@ -1,9 +1,10 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Github, Mountain } from "lucide-react";
+import { Github, Mountain, Settings } from "lucide-react";
 import { ModeToggle } from "../mode-toggle";
 import MainNav from "./main-nav";
 import MobileNav from "./mobile-nav";
+import Link from "next/link";
 
 export default function SiteHeader() {
 	return (
@@ -19,6 +20,11 @@ export default function SiteHeader() {
 					<Input placeholder="Search Anything ..." />
 					<Button variant={"ghost"} size={"sm"}>
 						<Github size={17} />
+					</Button>
+					<Button variant={"ghost"} size={"sm"} asChild>
+						<Link href={"/user/settings"}>
+							<Settings size={17} />
+						</Link>
 					</Button>
 					<ModeToggle />
 				</div>

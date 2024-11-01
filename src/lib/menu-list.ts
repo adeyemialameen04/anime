@@ -1,23 +1,23 @@
 const menu_list = [
 	{
 		title: "Home",
-		href: "",
+		href: "/",
 	},
 	{
 		title: "Movies",
-		href: "",
+		href: "/movies",
 	},
 	{
 		title: "Tv Series",
-		href: "",
+		href: "/tv-series",
 	},
 	{
-		title: "Most Popular",
-		href: "",
+		title: "Anime",
+		href: "/anime",
 	},
 	{
-		title: "Top Airing",
-		href: "",
+		title: "Trending",
+		href: "/trending",
 	},
 ];
 
