@@ -1,24 +1,26 @@
 "use client";
-
 import { useState, useEffect, useRef } from "react";
 import type { ServersData, Sourcedata } from "@/types/anime/anilist";
 import {
 	MediaPlayer,
 	type MediaPlayerInstance,
 	MediaProvider,
+	Poster,
 	Track,
+	useMediaRemote,
+	useMediaStore,
 } from "@vidstack/react";
 import {
 	defaultLayoutIcons,
 	DefaultVideoLayout,
 } from "@vidstack/react/player/layouts/default";
-import { RemotionPoster } from "@vidstack/react/player/remotion";
 import Servers from "./servers";
 import type { EnhancedSourcedata } from "../page";
 import ToggleSettings, { type GroupedEpisode } from "./settings";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { getSettings } from "@/lib/helpers/anime/settings";
+import VideoProgressSave from "@/hooks/video-progress-save";
 
 export type PlayerSettings = {
 	autoSkip: boolean;
@@ -27,21 +29,23 @@ export type PlayerSettings = {
 };
 
 export default function WatchDetails({
-	sources,
 	servers,
 	allSources,
 	groupedEpisode,
 	animeId,
+	poster,
 }: {
-	sources: Sourcedata;
 	servers: ServersData;
 	allSources: { sub: EnhancedSourcedata[]; dub: EnhancedSourcedata[] };
 	groupedEpisode: GroupedEpisode;
-	animeId: number;
+	animeId: string;
+	poster: string;
 }) {
 	const playerRef = useRef<MediaPlayerInstance>(null);
 	const router = useRouter();
-	const [currentSources, setCurrentSources] = useState<Sourcedata>(sources);
+	const [currentSources, setCurrentSources] = useState<Sourcedata>(
+		allSources.sub[0],
+	);
 	const [currentSourceUrl, setCurrentSourceUrl] = useState(
 		currentSources.sources[0].url,
 	);
@@ -50,10 +54,19 @@ export default function WatchDetails({
 			autoSkip: false,
 		},
 	);
-
-	const subtitles = currentSources.tracks.filter(
+	const [isOpening, setIsOpening] = useState(false);
+	const [isEnding, setIsEnding] = useState(false);
+	const subtitles = allSources.sub[0].tracks.filter(
 		(track) => track.kind === "captions",
 	);
+
+	const [getVideoProgress, UpdateVideoProgress] = VideoProgressSave();
+	const [progressSaved, setprogressSaved] = useState(false);
+	let interval;
+	const { duration } = useMediaStore(playerRef);
+	const remote = useMediaRemote(playerRef);
+	const [isPlaying, setIsPlaying] = useState(false);
+	console.log(groupedEpisode);
 
 	const skiptimes = [
 		{
@@ -91,6 +104,17 @@ export default function WatchDetails({
 				const opButtonText = skiptimes[0]?.text || "";
 				const edButtonText = skiptimes[1]?.text || "";
 
+				setIsOpening(
+					opButtonText === "Opening" &&
+						currentTime > openingStart &&
+						currentTime < openingEnd,
+				);
+				setIsEnding(
+					edButtonText === "Ending" &&
+						currentTime > endingStart &&
+						currentTime < endingEnd,
+				);
+
 				if (settings.autoSkip) {
 					if (
 						opButtonText === "Opening" &&
@@ -113,6 +137,51 @@ export default function WatchDetails({
 		});
 	}, [settings.autoSkip]);
 
+	useEffect(() => {
+		let interval: NodeJS.Timeout;
+
+		if (isPlaying) {
+			interval = setInterval(async () => {
+				const currentTime = playerRef.current?.currentTime
+					? Math.round(playerRef.current?.currentTime)
+					: 0;
+
+				UpdateVideoProgress(animeId, {
+					epTitle:
+						groupedEpisode?.current.title ||
+						`EP ${groupedEpisode.current.number}`,
+					epNum: Number(groupedEpisode.current.number),
+					timeWatched: currentTime,
+					duration: duration,
+					nextepNum: groupedEpisode?.next || null,
+					createdAt: new Date().toISOString(),
+				});
+				console.log("updating...", animeId);
+			}, 5000);
+		} else {
+			clearInterval(interval);
+		}
+
+		return () => {
+			clearInterval(interval);
+		};
+	}, [isPlaying, duration, animeId, groupedEpisode]);
+
+	function onLoadedMetadata() {
+		const seek = getVideoProgress(animeId);
+		console.log(seek);
+		if (seek?.epNum === Number(groupedEpisode.current.number)) {
+			const seekTime = seek?.timeWatched;
+			const percentage = duration !== 0 ? seekTime / Math.round(duration) : 0;
+
+			if (percentage >= 0.95) {
+				remote.seek(0);
+			} else {
+				remote.seek(seekTime);
+			}
+		}
+	}
+
 	function handleOpening() {
 		console.log("Skipping Intro");
 		Object.assign(playerRef.current ?? {}, {
@@ -130,9 +199,7 @@ export default function WatchDetails({
 	const onEnded = () => {
 		if (groupedEpisode.next) {
 			if (settings.autoNext) {
-				router.push(
-					`/anime/watch/${animeId}?ep=${groupedEpisode.next?.episodeId}`,
-				);
+				router.push(`/anime/watch/${animeId}/${groupedEpisode?.next}`);
 			}
 		}
 	};
@@ -142,44 +209,65 @@ export default function WatchDetails({
 			<div className="md:container">
 				<MediaPlayer
 					playsInline
-					// src={currentSourceUrl}
-					src={
-						"https://www088.anzeat.pro/streamhls/0b594d900f47daabc194844092384914/ep.1.1703914189.1080.m3u8"
-					}
+					src={currentSourceUrl}
 					crossOrigin="anonymous"
 					ref={playerRef}
 					streamType="on-demand"
-					onEnd={onEnded}
+					onLoadedMetadata={onLoadedMetadata}
+					onPause={() => {
+						setIsPlaying(false);
+					}}
+					onEnd={() => {
+						setIsPlaying(false);
+					}}
 					onEnded={onEnded}
+					loop={false}
+					title={groupedEpisode.current.title}
+					autoPlay={settings.autoPlay}
+					onCanPlay={() => {
+						setIsPlaying(true);
+					}}
 				>
 					<MediaProvider>
-						{/* {subtitles.map((track) => ( */}
-						{/* 	<Track */}
-						{/* 		src={track.file} */}
-						{/* 		label={track.label} */}
-						{/* 		lang="" */}
-						{/* 		kind="subtitles" */}
-						{/* 		key={track.label} */}
-						{/* 		default={track.label?.toLowerCase() === "english"} */}
-						{/* 	/> */}
-						{/* ))} */}
-						<RemotionPoster className="vds-poster" frame={10} />
+						{[
+							...new Map(
+								subtitles.map((subtitle) => [subtitle.label, subtitle]),
+							).values(),
+						].map((track) => (
+							<Track
+								src={track.file}
+								label={track.label}
+								lang=""
+								kind="subtitles"
+								key={track.label}
+								default={track.label?.toLowerCase() === "english"}
+							/>
+						))}
+						<Poster
+							className="vds-poster"
+							src={poster}
+							alt={groupedEpisode.current.title}
+						/>
 					</MediaProvider>
 					<DefaultVideoLayout icons={defaultLayoutIcons} />
 					{!settings.autoSkip && (
 						<>
-							<Button
-								onClick={handleOpening}
-								className="absolute top-[40px] right-2 z-40 text-[15px]"
-							>
-								Skip Opening
-							</Button>
-							<Button
-								onClick={handleEnding}
-								className="absolute bottom-[70px] sm:bottom-[83px] right-4 z-[40] bg-white text-black py-2 px-3 rounded-[6px] font-medium text-[15px]"
-							>
-								Skip Ending
-							</Button>
+							{isOpening && (
+								<Button
+									onClick={handleOpening}
+									className="absolute bottom-[70px] sm:bottom-[83px] right-4 z-[40] font-medium text-[15px]"
+								>
+									Skip Opening
+								</Button>
+							)}
+							{isEnding && (
+								<Button
+									onClick={handleEnding}
+									className="absolute bottom-[70px] sm:bottom-[83px] right-4 z-[40] font-medium text-[15px]"
+								>
+									Skip Ending
+								</Button>
+							)}
 						</>
 					)}
 				</MediaPlayer>
@@ -191,7 +279,7 @@ export default function WatchDetails({
 					settings={settings}
 					setSettings={setSettings}
 				/>
-				{/* <Servers servers={servers} onServerSelect={handleServerSelect} /> */}
+				<Servers servers={servers} onServerSelect={handleServerSelect} />
 			</div>
 		</>
 	);

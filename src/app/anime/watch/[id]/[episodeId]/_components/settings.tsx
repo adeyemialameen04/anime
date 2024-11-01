@@ -12,9 +12,9 @@ import type { PlayerSettings } from "./details";
 import { saveSettings } from "@/lib/helpers/anime/settings";
 
 export type GroupedEpisode = {
-	current: number;
-	next?: EpisodeList;
-	prev?: EpisodeList;
+	current: EpisodeList;
+	next?: number;
+	prev?: number;
 };
 
 export default function ToggleSettings({
@@ -24,7 +24,7 @@ export default function ToggleSettings({
 	setSettings,
 }: {
 	groupedEpisode: GroupedEpisode;
-	animeId: number;
+	animeId: string;
 	settings: PlayerSettings;
 	setSettings: React.Dispatch<React.SetStateAction<PlayerSettings>>;
 }) {
@@ -84,7 +84,7 @@ export default function ToggleSettings({
 				{groupedEpisode.prev && (
 					<Link
 						className="md:hidden"
-						href={`/anime/watch/${animeId}?ep=${groupedEpisode.prev?.episodeId}`}
+						href={`/anime/watch/${animeId}/${groupedEpisode?.prev}`}
 					>
 						<Button size={"sm"} className="flex items-center gap-3">
 							<ArrowBigLeftDash className="h-4 w-4" />
@@ -95,7 +95,7 @@ export default function ToggleSettings({
 				{groupedEpisode.next && (
 					<Link
 						className="md:hidden"
-						href={`/anime/watch/${animeId}?ep=${groupedEpisode.next?.episodeId}`}
+						href={`/anime/watch/${animeId}/${groupedEpisode?.next}`}
 					>
 						<Button size={"sm"} className="flex items-center gap-3">
 							Next <ArrowBigRightDash className="h-4 w-4" />
@@ -105,9 +105,7 @@ export default function ToggleSettings({
 			</ToggleGroup>
 			<div className="items-center gap-2 hidden md:flex">
 				{groupedEpisode.prev && (
-					<Link
-						href={`/anime/watch/${animeId}?ep=${groupedEpisode.prev?.episodeId}`}
-					>
+					<Link href={`/anime/watch/${animeId}/${groupedEpisode?.prev}`}>
 						<Button size={"sm"} className="flex items-center gap-3">
 							<ArrowBigLeftDash className="h-4 w-4" />
 							Prev
@@ -115,9 +113,7 @@ export default function ToggleSettings({
 					</Link>
 				)}
 				{groupedEpisode.next && (
-					<Link
-						href={`/anime/watch/${animeId}?ep=${groupedEpisode.next?.episodeId}`}
-					>
+					<Link href={`/anime/watch/${animeId}/${groupedEpisode?.next}`}>
 						<Button size={"sm"} className="flex items-center gap-3">
 							Next <ArrowBigRightDash className="h-4 w-4" />
 						</Button>

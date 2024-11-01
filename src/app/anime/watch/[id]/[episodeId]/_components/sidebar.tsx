@@ -156,7 +156,7 @@ export default function EpisodesSidebar({
 					<Breadcrumb>
 						<BreadcrumbList>
 							<BreadcrumbItem className="hidden md:block">
-								<BreadcrumbLink href={`/anime/${anime.id}`}>
+								<BreadcrumbLink href={`/anime/info/${anime.id}`}>
 									{anime.title.english}
 								</BreadcrumbLink>
 							</BreadcrumbItem>

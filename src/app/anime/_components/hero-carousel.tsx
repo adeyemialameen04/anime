@@ -13,7 +13,7 @@ import type { BaseAnilistAnime } from "@/types/anime/anilist";
 
 export default function HeroCarousel({
 	spotlight,
-	animes,
+	// animes,
 }: { spotlight: SpotlightAnime[]; animes: BaseAnilistAnime[] }) {
 	return (
 		<div className="py-7 md:container">
@@ -30,7 +30,7 @@ export default function HeroCarousel({
 				}}
 			>
 				<CarouselContent>
-					{animes.map((anime) => (
+					{spotlight.map((anime) => (
 						<CarouselItem key={anime.id} className="overflow-hidden">
 							<HeroItem anime={anime} />
 						</CarouselItem>

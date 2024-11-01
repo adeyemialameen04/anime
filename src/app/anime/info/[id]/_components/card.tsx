@@ -1,16 +1,23 @@
 import { Badge } from "@/components/ui/badge";
 import { CardContent, CardHeader, Card } from "@/components/ui/card";
-import changeImageSize from "@/lib/helpers/sizes";
+import changeImageSize, { changeImageSizeSm } from "@/lib/helpers/sizes";
 import truncateText from "@/lib/helpers/truncate";
 import Image from "next/image";
 import Link from "next/link";
 
-export default function AnimeCard({ anime, sm }: { anime: any; sm?: boolean }) {
+export default function AnimeCard({
+	anime,
+	sm = false,
+}: { anime: any; sm: boolean }) {
 	return (
 		<Link href={`/anime/info/${anime.id}`}>
 			<Card className="relative h-[200px] overflow-hidden">
 				<Image
-					src={changeImageSize(anime.poster as string, sm)}
+					src={
+						sm
+							? changeImageSizeSm(anime.poster as string)
+							: changeImageSize(anime.poster as string)
+					}
 					alt={anime.name}
 					className="object-cover"
 					fill

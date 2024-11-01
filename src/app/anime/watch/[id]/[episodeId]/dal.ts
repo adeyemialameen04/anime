@@ -1,5 +1,5 @@
 import makeFetch from "@/lib/helpers/fetch";
-import { EpisodeList } from "@/types/anime/anilist";
+import { EpisodeList, ServersData, ServerType } from "@/types/anime/anilist";
 import { SuccessResponse } from "@/types/api";
 
 export async function getEpisodesList(id: string) {
@@ -35,10 +35,10 @@ export type EpisodeSource = {
 	download: string;
 };
 
-export async function getEpisodeSources(id: string) {
+export async function getEpisodeSources(id: string, serverId: string) {
 	const fetchEpisodesList = makeFetch<SuccessResponse<EpisodeSource>>(
 		"aniwatch",
-		`/anilist/anime/sources/${id}`,
+		`/hianime/anime/sources/${id}?serverId=${serverId}`,
 		null,
 		{
 			next: {
@@ -61,9 +61,9 @@ export type EpisodeServer = {
 };
 
 export async function getEpisodeServers(id: string) {
-	const fetchEpisodesList = makeFetch<SuccessResponse<EpisodeServer[]>>(
+	const fetchEpisodesList = makeFetch<SuccessResponse<ServersData>>(
 		"aniwatch",
-		`/anilist/anime/servers/${id}`,
+		`/hianime/anime/servers/${id}`,
 		null,
 		{
 			next: {
