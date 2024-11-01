@@ -244,7 +244,7 @@ export default function WatchDetails({
 							/>
 						))}
 						<Poster
-							className="vds-poster"
+							className="vds-poster h-full w-full object-cover"
 							src={poster}
 							alt={groupedEpisode.current.title}
 						/>

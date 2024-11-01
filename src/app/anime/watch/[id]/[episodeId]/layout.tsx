@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import EpisodesSidebar from "./_components/sidebar";
-import { getAnilistAnimeDetails, getHiAnimeDetails } from "@/app/anime/dal";
-import { getEpisodesList } from "./dal";
+import { getHiAnimeDetails } from "@/app/anime/dal";
 
 export const metadata: Metadata = {
 	title: "Create Next App",
@@ -27,14 +26,20 @@ export default async function WatchAnimeLayout({
 		notFound();
 	}
 
+	const titleAndId = {
+		id: animeDetails.data.hianime.anime.info.id,
+		title:
+			animeDetails?.data?.anilist?.title.english ||
+			animeDetails?.data?.anilist?.title.romaji ||
+			animeDetails?.data?.anilist?.title.userPreferred ||
+			animeDetails.data.hianime.anime.info.name,
+	};
+
 	return (
 		<>
 			<EpisodesSidebar
 				episodes={animeDetails.data.episodes}
-				anime={{
-					id: animeDetails.data.hianime.anime.info.id,
-					title: animeDetails.data.anilist.title,
-				}}
+				anime={titleAndId}
 				currentEpisodeId={episodeId}
 			>
 				{children}

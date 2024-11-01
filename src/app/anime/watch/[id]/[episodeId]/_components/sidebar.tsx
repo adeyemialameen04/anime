@@ -1,5 +1,4 @@
 "use client";
-
 import * as React from "react";
 import { Search } from "lucide-react";
 
@@ -29,9 +28,8 @@ import {
 	SidebarRail,
 	SidebarTrigger,
 } from "@/components/ui/sidebar";
-import type { AnilistAnime, EpisodeList } from "@/types/anime/anilist";
+import type { EpisodeList } from "@/types/anime/anilist";
 import truncateText from "@/lib/helpers/truncate";
-import { useSearchParams } from "next/navigation";
 import { getCurrentEpisode } from "@/lib/utils/anime";
 
 export default function EpisodesSidebar({
@@ -42,10 +40,9 @@ export default function EpisodesSidebar({
 }: {
 	episodes: EpisodeList[];
 	children: React.ReactNode;
-	anime: AnilistAnime;
+	anime: { title: string; id: string };
 	currentEpisodeId: string;
 }) {
-	const searchParams = useSearchParams();
 	const [searchQuery, setSearchQuery] = React.useState("");
 	const activeEpisode = getCurrentEpisode(episodes, currentEpisodeId as string);
 
@@ -93,18 +90,8 @@ export default function EpisodesSidebar({
 		return `Episode ${activeEpisode.number}${activeEpisode.title ? `: ${activeEpisode.title}` : ""}`;
 	}, [activeEpisode]);
 
-	const createQueryString = React.useCallback(
-		(name: string, value: string) => {
-			const params = new URLSearchParams(searchParams.toString());
-			params.set(name, value);
-
-			return params.toString();
-		},
-		[searchParams],
-	);
-
 	return (
-		<SidebarProvider defaultOpen={false}>
+		<SidebarProvider defaultOpen={true}>
 			<Sidebar className="">
 				<SidebarHeader className="pt-5">
 					<form onSubmit={(e) => e.preventDefault()}>
@@ -157,7 +144,7 @@ export default function EpisodesSidebar({
 						<BreadcrumbList>
 							<BreadcrumbItem className="hidden md:block">
 								<BreadcrumbLink href={`/anime/info/${anime.id}`}>
-									{anime.title.english}
+									{anime.title}
 								</BreadcrumbLink>
 							</BreadcrumbItem>
 							<BreadcrumbSeparator className="hidden md:block" />

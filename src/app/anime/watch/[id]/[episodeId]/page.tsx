@@ -6,6 +6,7 @@ import { getEpisodeServers, getEpisodeSources } from "./dal";
 import { getHiAnimeDetails } from "@/app/anime/dal";
 import type { Sourcedata, ServersData } from "@/types/anime/anilist";
 import WatchDetails from "./_components/details";
+import { defaultCovers } from "@/data/cover";
 
 export interface EnhancedSourcedata extends Sourcedata {
 	serverInfo: {
@@ -73,6 +74,7 @@ export default async function AnimeDetail({
 	]);
 	const episodes = await animeDetails.data.episodes;
 	const allSources = await getAllSources(ep, servers?.data);
+	const random = Math.floor(Math.random() * 5);
 	// console.log("\n\n\n", allSources, "\n\n\n");
 
 	const activeEpisode = episodes.find(
@@ -99,7 +101,9 @@ export default async function AnimeDetail({
 					groupedEpisode={groupedEpisode}
 					allSources={allSources}
 					animeId={id}
-					poster={animeDetails.data.anilist.bannerImage}
+					poster={
+						animeDetails?.data?.anilist?.bannerImage || defaultCovers[random]
+					}
 				/>
 			</Suspense>
 		</main>

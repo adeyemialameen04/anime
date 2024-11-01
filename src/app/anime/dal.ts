@@ -1,7 +1,12 @@
 import makeFetch from "@/lib/helpers/fetch";
-import type { AnilistAnime, BaseAnilistAnime } from "@/types/anime/anilist";
+import type {
+	AnilistAnime,
+	BaseAnilistAnime,
+	EpisodeList,
+} from "@/types/anime/anilist";
 import { ScrapedAnimeAboutInfo } from "@/types/anime/hianime";
 import type { SuccessResponse } from "@/types/api";
+import { IAnimeInfo } from "@consumet/extensions/dist/models";
 
 export async function getAnilistAnimeDetails(id: string) {
 	const fetchAnimeDetails = makeFetch<SuccessResponse<AnilistAnime>>(
@@ -43,8 +48,13 @@ export async function getTop100() {
 	}
 }
 
+type JoinedAnime = {
+	hianime: IAnimeInfo;
+	anilist: AnilistAnime;
+	episodes: EpisodeList[];
+};
 export async function getHiAnimeDetails(id: string) {
-	const fetchAnimeDetails = makeFetch(
+	const fetchAnimeDetails = makeFetch<SuccessResponse<JoinedAnime>>(
 		"aniwatch",
 		`/hianime/anime/info/${id}`,
 		null,
