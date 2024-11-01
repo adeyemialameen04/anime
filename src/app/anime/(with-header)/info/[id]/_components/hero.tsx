@@ -13,6 +13,8 @@ import {
 	TooltipProvider,
 	TooltipTrigger,
 } from "@/components/ui/tooltip";
+import changeImageSize from "@/lib/helpers/sizes";
+import AddToList from "@/_components/shared/add-to-list";
 
 export default function Hero({
 	anime,
@@ -21,14 +23,14 @@ export default function Hero({
 }) {
 	const anilist = anime.anilist;
 	const hianime = anime.hianime;
-
+	const random = Math.floor(Math.random() * 5);
 	return (
 		<div className="relative">
 			<div className="h-[40dvh] md:h-[30dvh] w-full overflow-hidden border bg-muted shadow md:rounded-lg lg:h-[55dvh]">
 				<div
 					style={{
 						// backgroundImage: `url(${changeImageSize(anime.anime.info.poster)})`,
-						backgroundImage: `url(${anilist.bannerImage ?? defaultCovers[0]})`,
+						backgroundImage: `url(${anilist?.bannerImage ? anilist?.bannerImage : defaultCovers[random]})`,
 						backgroundSize: "cover",
 						backgroundPosition: "center",
 						backgroundRepeat: "no-repeat",
@@ -43,7 +45,7 @@ export default function Hero({
 					<main className="flex flex-col gap-4 md:flex-row">
 						<aside className="transform -translate-y-24 md:-translate-y-32 w-full space-y-2 md:w-1/3">
 							<div className="relative aspect-[2/3] w-full overflow-hidden rounded-lg border bg-muted shadow">
-								{anime.anilist.coverImage ? (
+								{anilist?.coverImage ? (
 									<Image
 										alt={`Poster for ${hianime.title || "anime"}`}
 										fill
@@ -52,8 +54,19 @@ export default function Hero({
 										sizes="(max-width: 768px) 100vw, 33vw"
 										// src={changeImageSize(animeInfo.poster)}
 										src={
-											anilist.coverImage.extraLarge || anilist.coverImage.large
+											anilist?.coverImage?.extraLarge ||
+											anilist?.coverImage?.large
 										}
+									/>
+									// biome-ignore lint/nursery/noNestedTernary: <explanation>
+								) : hianime.anime.info.poster ? (
+									<Image
+										alt={`Poster for ${hianime.title || "anime"}`}
+										fill
+										className="object-cover"
+										loading="lazy"
+										sizes="(max-width: 768px) 100vw, 33vw"
+										src={changeImageSize(hianime?.anime?.info?.poster)}
 									/>
 								) : (
 									<div className="flex h-full items-center justify-center">
@@ -61,7 +74,7 @@ export default function Hero({
 									</div>
 								)}
 							</div>
-							{anime.anilist.trailer && (
+							{anilist?.trailer && (
 								<a
 									href={
 										anilist.trailer.site === "youtube"
@@ -89,11 +102,7 @@ export default function Hero({
 										</Button>
 									</Link>
 								)}
-
-								<Button variant={"outline"}>
-									<PlusCircle className="h-4 w-4" />
-									Add to List
-								</Button>
+								<AddToList animeId={hianime.anime.info.id} />
 							</div>
 
 							<div className="flex gap-3 flex-wrap">
@@ -128,12 +137,15 @@ export default function Hero({
 								</TooltipProvider>
 							</div>
 							<h3 className="text-2xl font-semibold font-space-grotesk">
-								{anilist.title.english || anilist.title.romaji}
+								{anilist?.title?.english ||
+									anilist?.title?.romaji ||
+									anilist?.title?.userPreferred ||
+									hianime.anime.info.name}
 							</h3>
 							<TruncatedDescription
 								CHAR_LIMIT={400}
 								text={
-									anilist.format === "MANGA"
+									anilist?.format === "MANGA" || !anilist?.description
 										? hianime.anime.info.description
 										: anilist.description
 								}

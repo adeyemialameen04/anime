@@ -1,7 +1,8 @@
 export const defaultCovers = [
-	"https://i.animepahe.ru/covers/cover_default4.jpg",
-	"https://i.animepahe.ru/covers/cover_default5.jpg",
-	"https://i.animepahe.ru/covers/cover_default3.jpg",
-	"https://i.animepahe.ru/covers/cover_default2.jpg",
-	"https://i.animepahe.ru/covers/cover_default1.jpg",
+	"/cover_default5.jpg",
+	"/cover_default4.jpg",
+	"/cover_default3.jpg",
+	"/cover_default2.jpg",
+	"/cover_default0.jpg",
+	"/cover_default1.jpg",
 ];

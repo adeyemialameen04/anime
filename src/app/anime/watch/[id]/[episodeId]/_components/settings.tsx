@@ -10,6 +10,7 @@ import Link from "next/link";
 import type { EpisodeList } from "@/types/anime/anilist";
 import type { PlayerSettings } from "./details";
 import { saveSettings } from "@/lib/helpers/anime/settings";
+import AddToList from "@/_components/shared/add-to-list";
 
 export type GroupedEpisode = {
 	current: EpisodeList;
@@ -104,6 +105,7 @@ export default function ToggleSettings({
 				)}
 			</ToggleGroup>
 			<div className="items-center gap-2 hidden md:flex">
+				<AddToList animeId={animeId} />
 				{groupedEpisode.prev && (
 					<Link href={`/anime/watch/${animeId}/${groupedEpisode?.prev}`}>
 						<Button size={"sm"} className="flex items-center gap-3">
