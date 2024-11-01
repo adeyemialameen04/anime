@@ -14,7 +14,7 @@ export default async function Home() {
 		<main className="">
 			<HeroCarousel
 				spotlight={homePage?.data.spotlightAnimes as SpotlightAnime[]}
-				animes={top100Anime?.data}
+				// animes={top100Anime?.data}
 			/>
 			<AnimeTabs
 				trending={trending?.data.results as IAnimeResult[]}

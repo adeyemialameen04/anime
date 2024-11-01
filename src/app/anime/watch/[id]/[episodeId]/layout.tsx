@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import EpisodesSidebar from "./_components/sidebar";
-import { getAnilistAnimeDetails } from "@/app/anime/dal";
+import { getAnilistAnimeDetails, getHiAnimeDetails } from "@/app/anime/dal";
 import { getEpisodesList } from "./dal";
 
 export const metadata: Metadata = {
@@ -17,20 +17,24 @@ export default async function WatchAnimeLayout({
 	params: { id: string; episodeId: string };
 }) {
 	const { id, episodeId } = await params;
-	const [data, animeDetails] = await Promise.all([
-		getEpisodesList(id),
-		getAnilistAnimeDetails(id),
-	]);
+	// const [data, animeDetails] = await Promise.all([
+	// 	getEpisodesList(id),
+	// 	getAnilistAnimeDetails(id),
+	// ]);
 
-	if (!data || !animeDetails) {
+	const animeDetails = await getHiAnimeDetails(id);
+	if (!animeDetails) {
 		notFound();
 	}
 
 	return (
 		<>
 			<EpisodesSidebar
-				episodes={data.data}
-				anime={animeDetails.data}
+				episodes={animeDetails.data.episodes}
+				anime={{
+					id: animeDetails.data.hianime.anime.info.id,
+					title: animeDetails.data.anilist.title,
+				}}
 				currentEpisodeId={episodeId}
 			>
 				{children}

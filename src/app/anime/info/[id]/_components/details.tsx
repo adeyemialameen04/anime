@@ -12,14 +12,17 @@ export default async function AnimeDetailsTab({
 		{
 			title: "seasons",
 			data: hianime.seasons,
+			sm: true,
 		},
 		{
 			title: "related",
 			data: hianime.relatedAnimes,
+			sm: false,
 		},
 		{
 			title: "recommendations",
 			data: hianime.recommendedAnimes,
+			sm: false,
 		},
 	];
 	console.log(tabs[0].data);
@@ -49,7 +52,7 @@ export default async function AnimeDetailsTab({
 					{[
 						...new Map(tab.data.map((anime) => [anime.id, anime])).values(),
 					].map((anime, index) => (
-						<AnimeCard anime={anime} key={`${anime.id}-${index}`} />
+						<AnimeCard anime={anime} key={`${anime.id}-${index}`} sm={tab.sm} />
 					))}
 				</TabsContent>
 			))}

@@ -3,7 +3,63 @@ import "@vidstack/react/player/styles/default/layouts/video.css";
 import { Suspense } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { getEpisodeServers, getEpisodeSources } from "./dal";
-import { getAnilistAnimeDetails } from "@/app/anime/dal";
+import { getHiAnimeDetails } from "@/app/anime/dal";
+import type { Sourcedata, ServersData } from "@/types/anime/anilist";
+import WatchDetails from "./_components/details";
+
+export interface EnhancedSourcedata extends Sourcedata {
+	serverInfo: {
+		serverId: string;
+		serverName: string;
+	};
+}
+
+async function getAllSources(
+	episodeId: string,
+	servers: ServersData,
+): Promise<{ sub: EnhancedSourcedata[]; dub: EnhancedSourcedata[] }> {
+	const allSources: { sub: EnhancedSourcedata[]; dub: EnhancedSourcedata[] } = {
+		sub: [],
+		dub: [],
+	};
+
+	// Helper function to fetch sources for a specific server type
+	async function fetchSourcesForType(serverType: "sub" | "dub") {
+		const promises = servers[serverType].map(async (server) => {
+			try {
+				const sources = await getEpisodeSources(episodeId, server.serverId);
+
+				if (sources?.data?.sources && sources.data.sources.length > 0) {
+					// Enhance each source with server information
+					const enhancedSource: EnhancedSourcedata = {
+						...sources.data,
+						serverInfo: {
+							serverId: server.serverId,
+							serverName: server.serverName,
+						},
+					};
+					return enhancedSource;
+				}
+				return null;
+			} catch (error) {
+				console.error(
+					`Error fetching sources for ${serverType} server ${server.serverId}:`,
+					error,
+				);
+				return null;
+			}
+		});
+
+		// Filter out null values from failed requests
+		const results = (await Promise.all(promises)).filter(
+			(source): source is EnhancedSourcedata => source !== null,
+		);
+		allSources[serverType] = results;
+	}
+
+	await Promise.all([fetchSourcesForType("sub"), fetchSourcesForType("dub")]);
+	return allSources;
+}
 
 export default async function AnimeDetail({
 	params,
@@ -11,32 +67,40 @@ export default async function AnimeDetail({
 	params: { id: string; episodeId: string };
 }) {
 	const { id, episodeId: ep } = await params;
-	const [animeDetails, servers, sources] = await Promise.all([
-		getAnilistAnimeDetails(id),
+	const [animeDetails, servers] = await Promise.all([
+		getHiAnimeDetails(id),
 		getEpisodeServers(ep),
-		getEpisodeSources(ep),
 	]);
-	const episodeNum = ep.split("-").pop();
+	const episodes = await animeDetails.data.episodes;
+	const allSources = await getAllSources(ep, servers?.data);
+	// console.log("\n\n\n", allSources, "\n\n\n");
 
-	const skipResponse = await fetch(
-		`https://api.aniskip.com/v2/skip-times/${animeDetails?.data?.idMal}/${Number.parseInt(episodeNum as string)}?types[]=ed&types[]=mixed-ed&types[]=mixed-op&types[]=op&types[]=recap&episodeLength=`,
+	const activeEpisode = episodes.find(
+		(episode) => episode.id.split("=").pop() === ep,
 	);
-	console.log(
-		`https://api.aniskip.com/v2/skip-times/${animeDetails?.data?.idMal}/${Number.parseInt(episodeNum as string)}?types[]=ed&types[]=mixed-ed&types[]=mixed-op&types[]=op&types[]=recap&episodeLength=`,
+	const currentIndex = episodes.findIndex(
+		(episode) => episode.episodeId === activeEpisode?.episodeId,
 	);
-	const skipData = await skipResponse.json();
-	console.log(skipData);
+
+	const groupedEpisode = {
+		current: activeEpisode,
+		next:
+			currentIndex >= 0 && currentIndex < episodes.length - 1
+				? episodes[currentIndex + 1].episodeId
+				: null,
+		prev: currentIndex > 0 ? episodes[currentIndex - 1].episodeId : null,
+	};
 
 	return (
 		<main className="py-4">
 			<Suspense fallback={<Skeleton className="h-[470px] w-[850px]" />}>
-				{/* <WatchDetails */}
-				{/* 	servers={servers?.data} */}
-				{/* 	sources={sources.data} */}
-				{/* 	groupedEpisode={groupedEpisode} */}
-				{/* 	allSources={allSources} */}
-				{/* 	animeId={animeDetails.data.id} */}
-				{/* /> */}
+				<WatchDetails
+					servers={servers?.data}
+					groupedEpisode={groupedEpisode}
+					allSources={allSources}
+					animeId={id}
+					poster={animeDetails.data.anilist.bannerImage}
+				/>
 			</Suspense>
 		</main>
 	);

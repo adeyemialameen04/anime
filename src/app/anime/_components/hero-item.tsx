@@ -1,15 +1,15 @@
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 // import changeImageSize from "@/lib/helpers/sizes";
 import truncateText from "@/lib/helpers/truncate";
-import { BaseAnilistAnime } from "@/types/anime/anilist";
 import type { SpotlightAnime } from "@/types/anime/hianime";
-import { Play, Info } from "lucide-react";
+import { Play, Plus } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
-export default function HeroItem({ anime }: { anime: BaseAnilistAnime }) {
+export default function HeroItem({ anime }: { anime: SpotlightAnime }) {
 	console.log(anime);
-	const title = anime.title;
+	// const title = anime.title;
 
 	function changeImageSize(url: string): string {
 		const newUrl = url.replace(
@@ -24,14 +24,13 @@ export default function HeroItem({ anime }: { anime: BaseAnilistAnime }) {
 			<div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/50 to-transparent z-10" />
 			<div className="absolute inset-0">
 				<Image
-					src={anime.bannerImage}
-					// src={changeImageSize(anime.poster as string)}
+					src={changeImageSize(anime.poster as string)}
 					alt="Anime Cover"
 					fill
 					priority
 					className="object-cover"
 					sizes="100vw"
-					quality={90}
+					quality={100}
 				/>
 			</div>
 
@@ -42,21 +41,18 @@ export default function HeroItem({ anime }: { anime: BaseAnilistAnime }) {
 
 				{/* Title */}
 				<h1 className="text-2xl md:text-4xl font-space-grotesk font-bold text-white mb-4">
-					{title.english ?? title.userPreferred ?? title.romaji}
+					{anime.name}
 				</h1>
 
 				<div className="flex items-center gap-4 text-gray-300 text-sm mb-4">
 					<span className="flex items-center">
-						<span className="mr-2">{anime.format}</span>
+						<span className="mr-2">{anime.otherInfo[0]}</span>
 					</span>
-					<span>{anime.duration}m</span>
-					<span>{`${anime.startDate.month} ${anime.startDate.day}, ${anime.startDate.year}`}</span>
-					<span className="px-2 py-1 bg-green-600/20 text-green-400 rounded">
-						{/* {anime.otherInfo[3]} */}
-					</span>
-					<span className="px-2 py-1 bg-purple-600/20 text-purple-400 rounded">
-						CC
-					</span>
+					<span>{anime.otherInfo[1]}</span>
+					<span>{anime.otherInfo[2]}</span>
+					<Badge className="bg-green-600/20 text-green-400">
+						{anime.otherInfo[3]}
+					</Badge>
 				</div>
 
 				{/* Description */}
@@ -69,21 +65,15 @@ export default function HeroItem({ anime }: { anime: BaseAnilistAnime }) {
 
 				{/* Action Buttons */}
 				<div className="flex flex-col md:flex-row gap-4">
-					<Button className="rounded-full max-w-[180px]" asChild>
-						<Link href={`/anime/${anime.id}`}>
+					<Button className="rounded-full max-w-[200px]" asChild>
+						<Link href={`/anime/info/${anime.id}`}>
 							<Play className="w-4 h-4 mr-2" />
 							Watch Now
 						</Link>
 					</Button>
-					<Button
-						className="rounded-full max-w-[180px]"
-						variant={"secondary"}
-						asChild
-					>
-						<Link href={`/${anime.id}`}>
-							<Info className="w-4 h-4 mr-2" />
-							Details
-						</Link>
+					<Button className="max-w-[180px]" variant={"secondary"}>
+						<Plus className="w-4 h-4 mr-2" />
+						Add To List
 					</Button>
 				</div>
 			</div>
