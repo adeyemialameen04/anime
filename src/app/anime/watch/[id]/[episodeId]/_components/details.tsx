@@ -204,6 +204,18 @@ export default function WatchDetails({
 		}
 	};
 
+	useEffect(() => {
+		const handleKeyDown = (event: KeyboardEvent) => {
+			if (event.key === "s") {
+				if (isOpening) handleOpening();
+				else if (isEnding) handleEnding();
+			}
+		};
+
+		window.addEventListener("keydown", handleKeyDown);
+		return () => window.removeEventListener("keydown", handleKeyDown);
+	}, [isOpening, isEnding]);
+
 	return (
 		<>
 			<div className="md:container">

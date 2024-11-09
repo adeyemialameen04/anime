@@ -118,9 +118,18 @@ export default function Hero({
 										: "Completed"}
 								</Badge>
 								{hianime.anime.info.stats.episodes && (
-									<Badge variant={"secondary"}>
-										{hianime.anime.info.stats.episodes.sub}
-									</Badge>
+									<TooltipProvider>
+										<Tooltip>
+											<TooltipTrigger asChild>
+												<Badge variant={"secondary"}>
+													{hianime.anime.info.stats.episodes.sub}
+												</Badge>
+											</TooltipTrigger>
+											<TooltipContent>
+												<p>Episodes</p>
+											</TooltipContent>
+										</Tooltip>
+									</TooltipProvider>
 								)}
 								<Badge>{hianime.anime.info.stats.type}</Badge>
 								<TooltipProvider>

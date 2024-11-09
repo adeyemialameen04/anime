@@ -1,13 +1,4 @@
-import {
-	AuthenticationError,
-	PublicError,
-	ConflictError,
-	InvariantError,
-	AuthorizationError,
-	NotFoundError,
-	InternalServerError,
-} from "@/exceptions/errors";
-import { ANIWATCH_API_BASE_URL } from "../constants";
+import { ANIWATCH_API_BASE_URL, UNWIND_API_BASE_URL } from "../constants";
 
 type HttpMethod = "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
 interface NextJsOptions {
@@ -21,19 +12,8 @@ interface FetchOptions extends Omit<RequestInit, "method" | "body"> {
 	next?: NextJsOptions;
 }
 
-type CustomErrorConstructor = new (message: string) => Error;
-
-const errorMap: Record<number, CustomErrorConstructor> = {
-	400: InvariantError,
-	401: AuthenticationError,
-	403: AuthorizationError,
-	404: NotFoundError,
-	409: ConflictError,
-	500: InternalServerError,
-};
-
 export default function makeFetch<T>(
-	service: "aniwatch" | "users",
+	service: "aniwatch" | "unwind",
 	path: string,
 	accessToken: string | null,
 	options: FetchOptions = {},
@@ -66,22 +46,9 @@ export default function makeFetch<T>(
 		}
 
 		const res = await fetch(
-			`${service === "aniwatch" ? ANIWATCH_API_BASE_URL : ANIWATCH_API_BASE_URL}${path}`,
+			`${service === "aniwatch" ? ANIWATCH_API_BASE_URL : UNWIND_API_BASE_URL}${path}`,
 			fetchOptions,
 		);
-
-		if (!res.ok) {
-			let errorMessage: string;
-			try {
-				const errorData = await res.json();
-				errorMessage = errorData.detail || "An error occurred";
-			} catch {
-				errorMessage = res.statusText || "Request failed";
-			}
-
-			const ErrorClass = errorMap[res.status] || PublicError;
-			throw new ErrorClass(errorMessage);
-		}
 
 		const contentType = res.headers.get("content-type");
 		if (contentType?.includes("application/json")) {

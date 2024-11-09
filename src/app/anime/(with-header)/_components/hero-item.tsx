@@ -8,9 +8,6 @@ import Image from "next/image";
 import Link from "next/link";
 
 export default function HeroItem({ anime }: { anime: SpotlightAnime }) {
-	console.log(anime);
-	// const title = anime.title;
-
 	function changeImageSize(url: string): string {
 		const newUrl = url.replace(
 			"https://cdn.noitatnemucod.net/thumbnail/1366x768",

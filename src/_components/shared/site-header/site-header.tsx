@@ -5,6 +5,7 @@ import { ModeToggle } from "../mode-toggle";
 import MainNav from "./main-nav";
 import MobileNav from "./mobile-nav";
 import Link from "next/link";
+import { SearchDialog } from "./search-command";
 
 export default function SiteHeader() {
 	return (
@@ -17,7 +18,14 @@ export default function SiteHeader() {
 					<MainNav />
 				</div>
 				<div className="flex gap-3 items-center">
-					<Input placeholder="Search Anything ..." />
+					<div className="relative">
+						<Input placeholder="Search Anything ..." />
+						<p className="text-sm absolute top-[0.35rem] right-2 text-muted-foreground">
+							<kbd className="pointer-events-none inline-flex h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground opacity-100">
+								<span className="text-xs">⌘</span>J
+							</kbd>
+						</p>
+					</div>
 					<Button variant={"ghost"} size={"sm"}>
 						<Github size={17} />
 					</Button>
@@ -29,6 +37,7 @@ export default function SiteHeader() {
 					<ModeToggle />
 				</div>
 			</div>
+			<SearchDialog />
 		</header>
 	);
 }

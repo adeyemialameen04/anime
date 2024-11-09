@@ -1,6 +1,6 @@
 import makeFetch from "@/lib/helpers/fetch";
 import { EpisodeList, ServersData, ServerType } from "@/types/anime/anilist";
-import { SuccessResponse } from "@/types/api";
+import { SuccessResponse } from "@/types/anime/api";
 
 export async function getEpisodesList(id: string) {
 	const fetchEpisodesList = makeFetch<SuccessResponse<EpisodeList[]>>(

@@ -6,7 +6,7 @@ export default function Back() {
 	const router = useRouter();
 
 	return (
-		<div className="container md:container-none">
+		<div className="">
 			<Button
 				variant={"outline"}
 				onClick={() => router.push("/anime")}

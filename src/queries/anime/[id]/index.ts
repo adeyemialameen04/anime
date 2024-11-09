@@ -5,7 +5,7 @@ import type {
 	Sourcedata,
 } from "@/types/anime/anilist";
 import type { ScrapedAnimeAboutInfo } from "@/types/anime/hianime";
-import type { SuccessResponse } from "@/types/api";
+import type { SuccessResponse } from "@/types/anime/api";
 
 export async function getAniwatchAnimeDetails(id: string) {
 	const fetchAnimeDetails = makeFetch<SuccessResponse<ScrapedAnimeAboutInfo>>(
