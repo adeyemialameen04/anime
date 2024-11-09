@@ -5,7 +5,7 @@ import type {
 	EpisodeList,
 } from "@/types/anime/anilist";
 import { ScrapedAnimeAboutInfo } from "@/types/anime/hianime";
-import type { SuccessResponse } from "@/types/api";
+import type { SuccessResponse } from "@/types/anime/api";
 import { IAnimeInfo } from "@consumet/extensions/dist/models";
 
 export async function getAnilistAnimeDetails(id: string) {

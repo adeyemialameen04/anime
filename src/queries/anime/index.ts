@@ -1,7 +1,7 @@
 import makeFetch from "@/lib/helpers/fetch";
 import type { IAnimeResult, ISearch } from "@/types/anime/gogoanime";
 import type { ScrapedHomePage } from "@/types/anime/hianime";
-import type { SuccessResponse } from "@/types/api";
+import type { SuccessResponse } from "@/types/anime/api";
 
 export async function getHomePage(): Promise<
 	SuccessResponse<ScrapedHomePage> | undefined

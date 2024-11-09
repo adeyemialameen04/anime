@@ -7,7 +7,7 @@ export default function MainNav() {
 		<nav className="hidden md:flex gap-3 items-center">
 			{menu_list.map((item) => (
 				<Link
-					href={slugify(item.title)}
+					href={slugify(item.href)}
 					key={item.title}
 					className="hover:text-foreground/80 text-foreground/60 transition-colors duration-150"
 				>

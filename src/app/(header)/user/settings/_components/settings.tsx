@@ -12,6 +12,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
+import SubmitButton from "@/_components/shared/submit-btn";
 
 const FormSchema = z.object({
 	autoplay: z.boolean().optional(),
@@ -98,9 +99,9 @@ export default function Settings() {
 							</FormItem>
 						)}
 					/>
-					<Button type="submit" className="self-end">
+					<SubmitButton isLoading={false} className="self-end">
 						Save Settings
-					</Button>
+					</SubmitButton>
 				</div>
 			</form>
 		</Form>

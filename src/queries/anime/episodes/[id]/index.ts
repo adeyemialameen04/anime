@@ -1,6 +1,6 @@
 import makeFetch from "@/lib/helpers/fetch";
 import type { EpisodeList } from "@/types/anime/anilist";
-import type { SuccessResponse } from "@/types/api";
+import type { SuccessResponse } from "@/types/anime/api";
 
 type PaginatedRes = {
 	episodes: EpisodeList[];
