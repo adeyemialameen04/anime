@@ -4,7 +4,6 @@ import { FcGoogle } from "react-icons/fc";
 import { toast } from "sonner";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
 import { Button } from "@/components/ui/button";
 import {
 	Form,
@@ -21,47 +20,59 @@ import SubmitButton from "@/_components/shared/submit-btn";
 import { Separator } from "@/components/ui/separator";
 import { authAction } from "../actions";
 import { useServerAction } from "zsa-react";
-import { type AuthSchema, authSchema } from "../schema";
+import {
+	type AuthSchema,
+	authSchema,
+	signInSchema,
+	signUpSchema,
+} from "../schema";
 import { HTTP_STATUS } from "@/lib/constants";
 import { saveUserTokens } from "@/lib/auth";
-import { STATUS_CODES } from "http";
+import { useRouter } from "next/navigation";
 
 export default function AuthForm({ signUp }: { signUp: boolean }) {
-	const { isPending, execute, isError } = useServerAction(authAction, {
-		onSuccess: ({ data }) => {
-			if (data.status === HTTP_STATUS.CONFLICT && signUp) {
-				toast.error("User with this Email Already Exists");
-			} else {
-				toast.success(`Sign ${signUp ? "Up" : "In"} success`);
-			}
-		},
-	});
-	const form = useForm<AuthSchema>({
-		resolver: zodResolver(authSchema),
-		defaultValues: {
-			email: "",
-			password: "",
-		},
-	});
-
-	async function onSubmit(values: z.infer<typeof authSchema>) {
-		try {
-			const [data] = await execute({
-				email: values.email,
-				password: values.password,
-				signUp,
-			});
-
+	const router = useRouter();
+	const { isPending, execute } = useServerAction(authAction, {
+		onSuccess: async ({ data }) => {
+			console.log(data);
 			if (
-				data &&
-				(data.status === HTTP_STATUS.CREATED || data?.status === HTTP_STATUS.OK)
+				data.status === HTTP_STATUS.OK ||
+				data.status === HTTP_STATUS.CREATED
 			) {
 				await saveUserTokens({
 					accessToken: data?.data.accessToken as string,
 					refreshToken: data?.data.refreshToken as string,
 					id: data?.data.user.id as string,
 				});
+
+				toast.success(`Sign ${signUp ? "Up" : "In"} success`);
+				router.push("/anime");
+				router.refresh();
+			} else {
+				if (data.status === HTTP_STATUS.CONFLICT && signUp)
+					toast.error(
+						`User with this ${data.message.includes("username") ? "username" : "email"} Already Exists`,
+					);
+				if (data.status === HTTP_STATUS.UNAUTHORIZED)
+					toast.error("Invalid email or password");
 			}
+		},
+	});
+	const form = useForm<AuthSchema>({
+		resolver: zodResolver(signUp ? signUpSchema : signInSchema),
+		defaultValues: {
+			email: "",
+			password: "",
+			...(signUp && { username: "" }),
+		},
+	});
+
+	async function onSubmit(values: AuthSchema) {
+		try {
+			await execute({
+				...values,
+				signUp,
+			});
 		} catch (error) {
 			console.error("Form submission error", error);
 			toast.error("Failed to submit the form. Please try again.");
@@ -90,7 +101,22 @@ export default function AuthForm({ signUp }: { signUp: boolean }) {
 							</FormItem>
 						)}
 					/>
-
+					{signUp && (
+						<FormField
+							control={form.control}
+							name="username"
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel>Username</FormLabel>
+									<FormControl>
+										<Input placeholder="Luffy2618" {...field} />
+									</FormControl>
+									<FormDescription>Enter your Username.</FormDescription>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
+					)}
 					<FormField
 						control={form.control}
 						name="password"
@@ -126,6 +152,19 @@ export default function AuthForm({ signUp }: { signUp: boolean }) {
 			<Button className="w-full gap-5" variant={"secondary"}>
 				<FcGoogle /> Google
 			</Button>
+			<div className="text-center">
+				<Button
+					variant="link"
+					onClick={() =>
+						router.push(signUp ? "/auth/sign-in" : "/auth/sign-up")
+					}
+					className="text-primary"
+				>
+					{signUp
+						? "Already have an account? Sign In"
+						: "Don't have an account? Sign Up"}
+				</Button>
+			</div>
 		</div>
 	);
 }

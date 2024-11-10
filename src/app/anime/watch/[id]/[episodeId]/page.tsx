@@ -7,6 +7,7 @@ import { getHiAnimeDetails } from "@/app/anime/dal";
 import type { Sourcedata, ServersData } from "@/types/anime/anilist";
 import WatchDetails from "./_components/details";
 import { defaultCovers } from "@/data/cover";
+import logServer from "@/lib/helpers";
 
 export interface EnhancedSourcedata extends Sourcedata {
 	serverInfo: {
@@ -92,6 +93,7 @@ export default async function AnimeDetail({
 				: null,
 		prev: currentIndex > 0 ? episodes[currentIndex - 1].episodeId : null,
 	};
+	logServer(allSources);
 
 	return (
 		<main className="py-4">

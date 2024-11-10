@@ -12,26 +12,28 @@ import parse from "html-react-parser";
 import Image from "next/image";
 import truncateText from "@/lib/helpers/truncate";
 import Link from "next/link";
+import { TrendingAnime } from "@/types/anime/hianime";
+import changeImageSize from "@/lib/helpers/sizes";
 
 export default async function Trending({
 	trending,
-}: { trending: IAnimeResult[] }) {
+}: { trending: TrendingAnime[] }) {
 	return (
 		<TabsContent value="trending">
 			<div className="pt-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
 				{trending.map((anime) => {
-					const title = anime.title as ITitle;
+					// const title = anime.title as ITitle;
 
 					return (
 						<Link href={`/anime/info/${anime.id}`} key={anime.id}>
 							<Card className="overflow-hidden">
 								<div className="relative flex aspect-video w-full items-center justify-center overflow-hidden bg-background/50 shadow">
-									{anime.cover ? (
+									{anime.poster ? (
 										<Image
 											fill
 											className="object-cover"
-											src={anime.cover}
-											alt={title.userPreferred as string}
+											src={changeImageSize(anime.poster)}
+											alt={anime.name as string}
 											sizes="100vw"
 											priority
 											quality={90}
@@ -42,20 +44,14 @@ export default async function Trending({
 								</div>
 								<CardHeader>
 									<CardTitle className="font-space-grotesk capitalize">
-										{truncateText(
-											title?.english ||
-												title?.userPreferred ||
-												title?.romaji ||
-												"Untitled",
-											{
-												maxLength: 40,
-											},
-										)}
+										{truncateText(anime.name || "Untitled", {
+											maxLength: 40,
+										})}
 									</CardTitle>
 								</CardHeader>
 								<CardContent className="">
 									<CardDescription>
-										{parse(truncateText(anime.description, { maxLength: 150 }))}
+										{/* {parse(truncateText(anime.description, { maxLength: 150 }))} */}
 									</CardDescription>
 								</CardContent>
 								{/* <CardHeader className="relative aspect-[3/4] w-full p-0 bg-gray-100 animate-pulse"> */}
