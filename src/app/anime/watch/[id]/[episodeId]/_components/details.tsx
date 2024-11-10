@@ -44,7 +44,7 @@ export default function WatchDetails({
 	const playerRef = useRef<MediaPlayerInstance>(null);
 	const router = useRouter();
 	const [currentSources, setCurrentSources] = useState<Sourcedata>(
-		allSources.sub[0],
+		allSources.sub.length > 0 ? allSources.sub[0] : allSources.dub[0],
 	);
 	const [currentSourceUrl, setCurrentSourceUrl] = useState(
 		currentSources.sources[0].url,
@@ -56,9 +56,10 @@ export default function WatchDetails({
 	);
 	const [isOpening, setIsOpening] = useState(false);
 	const [isEnding, setIsEnding] = useState(false);
-	const subtitles = allSources.sub[0].tracks.filter(
-		(track) => track.kind === "captions",
-	);
+	const subtitles =
+		allSources.sub.length > 0
+			? allSources.sub[0].tracks.filter((track) => track.kind === "captions")
+			: allSources.dub[0].tracks.filter((track) => track.kind === "captions");
 
 	const [getVideoProgress, UpdateVideoProgress] = VideoProgressSave();
 	const [progressSaved, setprogressSaved] = useState(false);

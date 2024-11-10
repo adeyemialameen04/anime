@@ -17,7 +17,7 @@ export default async function Home() {
 				// animes={top100Anime?.data}
 			/>
 			<AnimeTabs
-				trending={trending?.data.results as IAnimeResult[]}
+				trending={homePage?.data.trendingAnimes}
 				latest_episodes={
 					homePage?.data.latestEpisodeAnimes as LatestEpisodeAnime[]
 				}

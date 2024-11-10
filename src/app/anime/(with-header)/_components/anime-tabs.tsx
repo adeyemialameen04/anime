@@ -1,13 +1,13 @@
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { IAnimeResult } from "@/types/anime/gogoanime";
-import type { LatestEpisodeAnime } from "@/types/anime/hianime";
+import type { LatestEpisodeAnime, TrendingAnime } from "@/types/anime/hianime";
 import Trending from "./trending";
 import LatestEpisodes from "./latest-episodes";
 
 export default function AnimeTabs({
 	trending,
 	latest_episodes,
-}: { trending: IAnimeResult[]; latest_episodes: LatestEpisodeAnime[] }) {
+}: { trending: TrendingAnime[]; latest_episodes: LatestEpisodeAnime[] }) {
 	const tabs = [
 		{ title: "Trending", data: trending },
 		{ title: "Latest Episodes", data: latest_episodes },
