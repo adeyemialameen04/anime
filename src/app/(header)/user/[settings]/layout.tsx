@@ -1,11 +1,17 @@
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { slugify } from "@/lib/helpers/slugify";
 import { cn } from "@/lib/utils";
 import { Heart, Play, Settings2, User } from "lucide-react";
-import React from "react";
+import Link from "next/link";
 
-export default function UserLayout({
+export default async function UserLayout({
 	children,
-}: Readonly<{ children: React.ReactNode }>) {
+	params,
+}: Readonly<{
+	children: React.ReactNode;
+	params: Promise<{ settings: string }>;
+}>) {
+	const currentPage = (await params).settings;
 	const tabs = [
 		{
 			title: "Continue Watching",
@@ -20,9 +26,8 @@ export default function UserLayout({
 	];
 
 	return (
-		<div className="flex flex-col gap-3 container">
-			<div></div>
-			<Tabs>
+		<div className="flex flex-col gap-3 container pt-3">
+			<Tabs defaultValue={currentPage.toLowerCase()}>
 				<TabsList className="mb-4 flex gap-4 md:gap-7 max-w-max bg-transparent border-b py-6 rounded-none justify-start">
 					{tabs.map((tab) => (
 						<TabsTrigger
@@ -36,8 +41,11 @@ export default function UserLayout({
 								"after:opacity-0 after:scale-x-0",
 								"data-[state=active]:after:opacity-100 data-[state=active]:after:scale-x-100",
 							)}
+							asChild
 						>
-							{<tab.icon className="w-4 h-4 mr-2" />} {tab.title}
+							<Link href={`/user/${slugify(tab.title)}`}>
+								{<tab.icon className="w-4 h-4 mr-2" />} {tab.title}
+							</Link>
 						</TabsTrigger>
 					))}
 				</TabsList>

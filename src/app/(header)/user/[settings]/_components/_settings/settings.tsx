@@ -11,7 +11,6 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Switch } from "@/components/ui/switch";
-import { Button } from "@/components/ui/button";
 import SubmitButton from "@/_components/shared/submit-btn";
 
 const FormSchema = z.object({
