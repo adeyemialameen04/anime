@@ -4,5 +4,6 @@ export type AuthSuccess = {
 	user: {
 		email: string;
 		id: string;
+		profileId: string;
 	};
 };

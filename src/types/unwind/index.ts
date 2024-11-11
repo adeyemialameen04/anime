@@ -10,3 +10,8 @@ export type ErrorResponse = {
 	error: string;
 	detail: string;
 };
+
+export type TimeStamp = {
+	createdAt: string;
+	updatedAt: string;
+};

@@ -19,7 +19,11 @@ export default function SubmitButton({
 	...props
 }: ButtonProps) {
 	return (
-		<Button {...props} className={cn("items-center gap-3", className)}>
+		<Button
+			{...props}
+			disabled={isLoading}
+			className={cn("items-center gap-3", className)}
+		>
 			<Loader className={cn("animate-spin", !isLoading && "hidden")} />
 			{children}
 		</Button>

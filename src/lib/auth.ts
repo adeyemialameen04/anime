@@ -1,9 +1,11 @@
 "use server";
+import type { AuthSuccess } from "@/types/unwind/auth";
 import { cookies } from "next/headers";
 
-export const assertUserAuthenticated = async () => {
+export const assertUserAuthenticated = async (): Promise<AuthSuccess> => {
 	const cookieStore = await cookies();
 	const accessToken = cookieStore.get("accessToken");
+	const refreshToken = cookieStore.get("refreshToken");
 	const userDataCookie = cookieStore.get("user");
 
 	if (!accessToken || !userDataCookie) {
@@ -14,8 +16,8 @@ export const assertUserAuthenticated = async () => {
 		const user = JSON.parse(userDataCookie.value);
 
 		return {
-			accessToken,
-			userId: user.id,
+			accessToken: accessToken?.value as string,
+			refreshToken: refreshToken?.value as string,
 			user,
 		};
 	} catch (error) {
@@ -24,11 +26,7 @@ export const assertUserAuthenticated = async () => {
 	}
 };
 
-export async function saveUserTokens(data: {
-	accessToken: string;
-	refreshToken: string;
-	id: string;
-}) {
+export async function saveUserTokens(data: AuthSuccess) {
 	const cookieStore = await cookies();
 	cookieStore.set("accessToken", data.accessToken as string, {
 		httpOnly: true,
@@ -45,7 +43,8 @@ export async function saveUserTokens(data: {
 		path: "/",
 	});
 
-	cookieStore.set("uuid", data.id, {
+	const userData = JSON.stringify(data.user);
+	cookieStore.set("user", userData, {
 		httpOnly: false,
 		secure: process.env.NODE_ENV !== "development",
 		sameSite: "strict",

@@ -20,12 +20,7 @@ import SubmitButton from "@/_components/shared/submit-btn";
 import { Separator } from "@/components/ui/separator";
 import { authAction } from "../actions";
 import { useServerAction } from "zsa-react";
-import {
-	type AuthSchema,
-	authSchema,
-	signInSchema,
-	signUpSchema,
-} from "../schema";
+import { type AuthSchema, signInSchema, signUpSchema } from "../schema";
 import { HTTP_STATUS } from "@/lib/constants";
 import { saveUserTokens } from "@/lib/auth";
 import { useRouter } from "next/navigation";
@@ -33,27 +28,28 @@ import { useRouter } from "next/navigation";
 export default function AuthForm({ signUp }: { signUp: boolean }) {
 	const router = useRouter();
 	const { isPending, execute } = useServerAction(authAction, {
-		onSuccess: async ({ data }) => {
-			console.log(data);
-			if (
-				data.status === HTTP_STATUS.OK ||
-				data.status === HTTP_STATUS.CREATED
-			) {
+		onSuccess: async ({ data: res }) => {
+			console.log(res);
+			if (res.status === HTTP_STATUS.OK || res.status === HTTP_STATUS.CREATED) {
 				await saveUserTokens({
-					accessToken: data?.data.accessToken as string,
-					refreshToken: data?.data.refreshToken as string,
-					id: data?.data.user.id as string,
+					accessToken: res?.data.accessToken as string,
+					refreshToken: res?.data.refreshToken as string,
+					user: {
+						id: res.data.user.id,
+						email: res.data.user.email,
+						profileId: res.data.user.profileId,
+					},
 				});
 
 				toast.success(`Sign ${signUp ? "Up" : "In"} success`);
 				router.push("/anime");
 				router.refresh();
 			} else {
-				if (data.status === HTTP_STATUS.CONFLICT && signUp)
+				if (res.status === HTTP_STATUS.CONFLICT && signUp)
 					toast.error(
-						`User with this ${data.message.includes("username") ? "username" : "email"} Already Exists`,
+						`User with this ${res.message.includes("username") ? "username" : "email"} Already Exists`,
 					);
-				if (data.status === HTTP_STATUS.UNAUTHORIZED)
+				if (res.status === HTTP_STATUS.UNAUTHORIZED)
 					toast.error("Invalid email or password");
 			}
 		},
