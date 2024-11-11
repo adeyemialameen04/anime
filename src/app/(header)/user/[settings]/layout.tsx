@@ -3,6 +3,7 @@ import { slugify } from "@/lib/helpers/slugify";
 import { cn } from "@/lib/utils";
 import { Heart, Play, Settings2, User } from "lucide-react";
 import Link from "next/link";
+import { notFound } from "next/navigation";
 
 export default async function UserLayout({
 	children,
@@ -24,11 +25,17 @@ export default async function UserLayout({
 		{ title: "Profile", icon: User },
 		{ title: "Settings", icon: Settings2 },
 	];
+	const isPageInTabs = tabs.some(
+		(tab) => tab.title.toLowerCase() === currentPage.toLowerCase(),
+	);
+	if (!isPageInTabs) {
+		return notFound();
+	}
 
 	return (
 		<div className="flex flex-col gap-3 container pt-3">
 			<Tabs defaultValue={currentPage.toLowerCase()}>
-				<TabsList className="mb-4 flex gap-4 md:gap-7 max-w-max bg-transparent border-b py-6 rounded-none justify-start">
+				<TabsList className="mb-4 flex gap-4 md:gap-7 max-w-2xl bg-transparent border-b py-6 rounded-none justify-start">
 					{tabs.map((tab) => (
 						<TabsTrigger
 							value={tab.title.toLowerCase()}

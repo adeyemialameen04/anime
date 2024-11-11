@@ -26,6 +26,9 @@ import { HTTP_STATUS } from "@/lib/constants";
 import { toast } from "sonner";
 import { type EditProfile, editProfileSchema } from "../../schema";
 import { defaultCovers } from "@/data/cover";
+import type { Profile } from "@/types/unwind/user";
+import type { TimeStamp } from "@/types/unwind";
+import { revalidateTagServer } from "@/app/actions";
 
 const getDefaultImageIndex = (seed: number) => {
 	return seed % defaultCovers.length;
@@ -34,11 +37,14 @@ const getDefaultImageIndex = (seed: number) => {
 const defaultCoverIndex = getDefaultImageIndex(0);
 const defaultProfileIndex = getDefaultImageIndex(1);
 
-export default function ProfileForm() {
+export default function ProfileForm({
+	profileData,
+}: { profileData: Profile & TimeStamp }) {
 	const { isPending, execute } = useServerAction(editProfileAction, {
 		onSuccess: async ({ data: res }) => {
 			console.log(res);
 			if (res.status === HTTP_STATUS.OK || res.status === HTTP_STATUS.CREATED) {
+				await revalidateTagServer(`profile-${profileData.id}`);
 				toast.success("Profile Edited Successfully");
 			} else {
 				if (res.status === HTTP_STATUS.CONFLICT)
@@ -51,26 +57,23 @@ export default function ProfileForm() {
 	});
 
 	const [coverPreview, setCoverPreview] = useState<string>(
-		defaultCovers[defaultCoverIndex],
+		profileData.coverPic || defaultCovers[defaultCoverIndex],
 	);
 	const [profilePreview, setProfilePreview] = useState<string>(
-		defaultCovers[defaultProfileIndex],
+		profileData.profilePic || defaultCovers[defaultProfileIndex],
 	);
 
 	const form = useForm<EditProfile>({
 		resolver: zodResolver(editProfileSchema),
 		defaultValues: {
-			name: "",
-			username: "",
-			coverPic: defaultCovers[defaultCoverIndex],
-			profilePic: defaultCovers[defaultProfileIndex],
+			name: profileData.name || "",
+			username: profileData.username || "",
+			coverPic: profileData.coverPic || defaultCovers[defaultCoverIndex],
+			profilePic: profileData.profilePic || defaultCovers[defaultProfileIndex],
 		},
 	});
 
 	async function onSubmit(values: z.infer<typeof editProfileSchema>) {
-		console.log("Cover Pic:", `${values.coverPic.slice(0, 50)}...`);
-		console.log("Profile Pic:", `${values.profilePic.slice(0, 50)}...`);
-		console.log("Are they equal?", values.coverPic === values.profilePic);
 		await execute({ ...values });
 	}
 
@@ -160,6 +163,7 @@ export default function ProfileForm() {
 												<AvatarImage
 													src={profilePreview}
 													alt="Profile picture"
+													className="object-cover"
 												/>
 												<AvatarFallback>PP</AvatarFallback>
 												<Button
