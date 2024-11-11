@@ -13,8 +13,6 @@ export const editProfileAction = authenticatedAction
 			ctx: { user },
 		}) => {
 			try {
-				console.log(profilePic === coverPic);
-
 				return await makeFetch<SuccessResponse<Profile & TimeStamp>>(
 					"unwind",
 					"/user/profile",
@@ -24,8 +22,8 @@ export const editProfileAction = authenticatedAction
 						body: {
 							name: name,
 							username: username,
-							profilePic,
-							coverPic,
+							...(!coverPic?.startsWith("https://res.") && { coverPic }),
+							...(!profilePic?.startsWith("https://res.") && { profilePic }),
 						},
 					},
 				)();

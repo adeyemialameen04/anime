@@ -17,6 +17,12 @@ const nextConfig: NextConfig = {
 			},
 			{
 				protocol: "https",
+				hostname: "res.cloudinary.com",
+				port: "",
+				pathname: "/dzsomaq4z/image/**",
+			},
+			{
+				protocol: "https",
 				hostname: "media.kitsu.app",
 				port: "",
 				pathname: "/episodes/**",
