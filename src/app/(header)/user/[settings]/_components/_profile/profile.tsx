@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import * as z from "zod";
+import type { z } from "zod";
 import { Button } from "@/components/ui/button";
 import {
 	Form,
@@ -27,10 +27,14 @@ import { toast } from "sonner";
 import { type EditProfile, editProfileSchema } from "../../schema";
 import { defaultCovers } from "@/data/cover";
 
-export default function ProfileForm() {
-	const rand1 = Math.floor(Math.random() * 5);
-	const rand2 = Math.floor(Math.random() * 5);
+const getDefaultImageIndex = (seed: number) => {
+	return seed % defaultCovers.length;
+};
 
+const defaultCoverIndex = getDefaultImageIndex(0);
+const defaultProfileIndex = getDefaultImageIndex(1);
+
+export default function ProfileForm() {
 	const { isPending, execute } = useServerAction(editProfileAction, {
 		onSuccess: async ({ data: res }) => {
 			console.log(res);
@@ -39,16 +43,18 @@ export default function ProfileForm() {
 			} else {
 				if (res.status === HTTP_STATUS.CONFLICT)
 					toast.error("User with this username already Exists");
-				if (res.status === HTTP_STATUS.UNAUTHORIZED)
+				else if (res.status === HTTP_STATUS.UNAUTHORIZED)
 					toast.error("Invalid email or password");
+				else toast.error("An unexpected error occurred");
 			}
 		},
 	});
+
 	const [coverPreview, setCoverPreview] = useState<string>(
-		defaultCovers[rand1],
+		defaultCovers[defaultCoverIndex],
 	);
 	const [profilePreview, setProfilePreview] = useState<string>(
-		defaultCovers[rand2],
+		defaultCovers[defaultProfileIndex],
 	);
 
 	const form = useForm<EditProfile>({
@@ -56,26 +62,34 @@ export default function ProfileForm() {
 		defaultValues: {
 			name: "",
 			username: "",
-			coverPic: defaultCovers[rand1],
-			profilePic: defaultCovers[rand2],
+			coverPic: defaultCovers[defaultCoverIndex],
+			profilePic: defaultCovers[defaultProfileIndex],
 		},
 	});
 
 	async function onSubmit(values: z.infer<typeof editProfileSchema>) {
+		console.log("Cover Pic:", `${values.coverPic.slice(0, 50)}...`);
+		console.log("Profile Pic:", `${values.profilePic.slice(0, 50)}...`);
+		console.log("Are they equal?", values.coverPic === values.profilePic);
 		await execute({ ...values });
 	}
 
 	const handleImageChange = (
 		e: React.ChangeEvent<HTMLInputElement>,
 		setPreview: (url: string) => void,
-
 		field: any,
+		fieldName: string,
 	) => {
 		const file = e.target.files?.[0];
 		if (file) {
-			const url = URL.createObjectURL(file);
-			setPreview(url);
-			field.onChange(url);
+			const reader = new FileReader();
+			reader.onloadend = () => {
+				const base64String = reader.result as string;
+				setPreview(base64String);
+				field.onChange(base64String);
+				console.log(`${fieldName} changed:`, `${base64String.slice(0, 50)}...`);
+			};
+			reader.readAsDataURL(file);
 		}
 	};
 
@@ -116,7 +130,12 @@ export default function ProfileForm() {
 												className="hidden"
 												accept="image/*"
 												onChange={(e) =>
-													handleImageChange(e, setCoverPreview, field)
+													handleImageChange(
+														e,
+														setCoverPreview,
+														field,
+														"coverPic",
+													)
 												}
 											/>
 										</div>
@@ -146,7 +165,6 @@ export default function ProfileForm() {
 												<Button
 													type="button"
 													size="icon"
-													// variant="secondary"
 													className="absolute bottom-0 right-1"
 													onClick={() =>
 														document.getElementById("profile-upload")?.click()
@@ -155,14 +173,18 @@ export default function ProfileForm() {
 													<ImagePlus className="h-4 w-4" />
 												</Button>
 											</Avatar>
-
 											<input
 												id="profile-upload"
 												type="file"
 												className="hidden"
 												accept="image/*"
 												onChange={(e) =>
-													handleImageChange(e, setProfilePreview, field)
+													handleImageChange(
+														e,
+														setProfilePreview,
+														field,
+														"profilePic",
+													)
 												}
 											/>
 										</div>
@@ -182,7 +204,7 @@ export default function ProfileForm() {
 									<FormControl>
 										<Input placeholder="Enter your name" {...field} />
 									</FormControl>
-									<FormDescription>This won't public.</FormDescription>
+									<FormDescription>This won't be public.</FormDescription>
 									<FormMessage />
 								</FormItem>
 							)}
