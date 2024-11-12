@@ -21,7 +21,7 @@ export default function SubmitButton({
 	return (
 		<Button
 			{...props}
-			disabled={isLoading}
+			disabled={isLoading || props.disabled}
 			className={cn("items-center gap-3", className)}
 		>
 			<Loader className={cn("animate-spin", !isLoading && "hidden")} />

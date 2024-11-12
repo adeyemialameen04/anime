@@ -8,4 +8,5 @@ export const HTTP_STATUS = {
 	UNAUTHORIZED: "Unauthorized",
 	CREATED: "Created",
 	OK: "OK",
+	NOT_FOUND: "Not Found",
 };

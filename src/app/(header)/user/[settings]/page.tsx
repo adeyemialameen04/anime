@@ -3,14 +3,14 @@ import Settings from "./_components/_settings/settings";
 import Profile from "./_components/_profile/profile";
 import { assertUserAuthenticated } from "@/lib/auth";
 import makeFetch from "@/lib/helpers/fetch";
-import type { SuccessResponse, TimeStamp } from "@/types/unwind";
+import type { ApiResponse, TimeStamp } from "@/types/unwind";
 import type { Profile as ProfileType } from "@/types/unwind/user";
 
 const getProfile = async () => {
 	const user = await assertUserAuthenticated();
 
 	try {
-		return await makeFetch<SuccessResponse<ProfileType & TimeStamp>>(
+		return await makeFetch<ApiResponse<ProfileType & TimeStamp>>(
 			"unwind",
 			"/user/profile",
 			user.accessToken,

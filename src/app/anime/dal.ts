@@ -48,8 +48,8 @@ export async function getTop100() {
 	}
 }
 
-type JoinedAnime = {
-	hianime: IAnimeInfo;
+export type JoinedAnime = {
+	hianime: ScrapedAnimeAboutInfo;
 	anilist: AnilistAnime;
 	episodes: EpisodeList[];
 };

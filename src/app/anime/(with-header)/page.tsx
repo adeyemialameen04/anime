@@ -9,8 +9,6 @@ import AnimeTabs from "./_components/anime-tabs";
 
 export default async function Home() {
 	const homePage = await getHomePage();
-	// const top100Anime = await getTop100();
-	// const trending = await getTrendingAnimes();
 
 	return (
 		<main className="">

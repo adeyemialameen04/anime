@@ -1,7 +1,7 @@
 "use server";
 import { unauthenticatedAction } from "@/lib/safe-action";
 import makeFetch from "@/lib/helpers/fetch";
-import type { SuccessResponse } from "@/types/unwind";
+import type { ApiResponse } from "@/types/unwind";
 import { authSchema } from "./schema";
 import type { AuthSuccess } from "@/types/unwind/auth";
 
@@ -12,7 +12,7 @@ export const authAction = unauthenticatedAction
 		try {
 			const { signUp, ...credentials } = input;
 
-			return await makeFetch<SuccessResponse<AuthSuccess>>(
+			return await makeFetch<ApiResponse<AuthSuccess>>(
 				"unwind",
 				`/auth/${signUp ? "signup" : "login"}`,
 				null,

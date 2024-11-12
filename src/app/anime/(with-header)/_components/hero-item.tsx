@@ -1,13 +1,16 @@
+import AddToList from "@/_components/shared/add-to-list";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 // import changeImageSize from "@/lib/helpers/sizes";
 import truncateText from "@/lib/helpers/truncate";
+import { getInWatchList } from "@/queries/unwind/user";
 import type { SpotlightAnime } from "@/types/anime/hianime";
 import { Play, Plus } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
 export default function HeroItem({ anime }: { anime: SpotlightAnime }) {
+	// const watchListItem = await getInWatchList(anime.id as string);
 	function changeImageSize(url: string): string {
 		const newUrl = url.replace(
 			"https://cdn.noitatnemucod.net/thumbnail/1366x768",
@@ -68,10 +71,17 @@ export default function HeroItem({ anime }: { anime: SpotlightAnime }) {
 							Watch Now
 						</Link>
 					</Button>
-					<Button className="max-w-[180px]" variant={"secondary"}>
-						<Plus className="w-4 h-4 mr-2" />
-						Add To List
-					</Button>
+					{/* <AddToList */}
+					{/* 	mediaDetails={{ */}
+					{/* 		mediaId: anime.id as string, */}
+					{/* 		poster: anime.poster as string, */}
+					{/* 		title: anime.name ?? (anime.jname as string), */}
+					{/* 		type: "anime", */}
+					{/* 		episodes: anime.episodes.sub as number, */}
+					{/* 		duration: Number(anime.otherInfo[1].slice(0, -1)) as number, */}
+					{/* 	}} */}
+					{/* 	watchListItem={watchListItem} */}
+					{/* /> */}
 				</div>
 			</div>
 		</div>

@@ -1,18 +1,10 @@
-import {
-	Card,
-	CardContent,
-	CardTitle,
-	CardDescription,
-	CardHeader,
-} from "@/components/ui/card";
-import type { IAnimeResult, ITitle } from "@/types/anime/gogoanime";
+import { Card, CardContent, CardTitle, CardHeader } from "@/components/ui/card";
 import { TabsContent } from "@radix-ui/react-tabs";
 import { ImageIcon } from "lucide-react";
-import parse from "html-react-parser";
 import Image from "next/image";
 import truncateText from "@/lib/helpers/truncate";
 import Link from "next/link";
-import { TrendingAnime } from "@/types/anime/hianime";
+import type { TrendingAnime } from "@/types/anime/hianime";
 import changeImageSize from "@/lib/helpers/sizes";
 
 export default async function Trending({
@@ -50,9 +42,9 @@ export default async function Trending({
 									</CardTitle>
 								</CardHeader>
 								<CardContent className="">
-									<CardDescription>
-										{/* {parse(truncateText(anime.description, { maxLength: 150 }))} */}
-									</CardDescription>
+									{/* <CardDescription> */}
+									{/* 	{parse(truncateText(anime.description, { maxLength: 150 }))} */}
+									{/* </CardDescription> */}
 								</CardContent>
 								{/* <CardHeader className="relative aspect-[3/4] w-full p-0 bg-gray-100 animate-pulse"> */}
 								{/* 	<Image */}
