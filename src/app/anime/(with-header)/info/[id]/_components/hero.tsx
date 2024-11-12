@@ -43,7 +43,6 @@ export default function Hero({
 					data-testid="banner"
 				/>
 			</div>
-			{/* Content Container - Moved outside banner container */}
 			<div className="container relative mx-auto">
 				<div className="mx-auto max-w-4xl space-y-8 p-4 md:space-y-12 md:p-0">
 					<main className="flex flex-col gap-4 md:flex-row">

@@ -6,7 +6,6 @@ import type { JoinedAnime } from "@/app/anime/dal";
 export default async function AnimeDetailsTab({
 	anime,
 }: { anime: JoinedAnime }) {
-	const anilist = anime.anilist;
 	const hianime = anime.hianime;
 	const tabs = [
 		{
@@ -25,7 +24,6 @@ export default async function AnimeDetailsTab({
 			sm: false,
 		},
 	];
-	console.log(tabs[0].data);
 
 	return (
 		<Tabs

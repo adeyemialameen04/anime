@@ -22,8 +22,8 @@ import { authAction } from "../actions";
 import { useServerAction } from "zsa-react";
 import { type AuthSchema, signInSchema, signUpSchema } from "../schema";
 import { HTTP_STATUS } from "@/lib/constants";
-import { saveUserTokens } from "@/lib/auth";
 import { useRouter } from "next/navigation";
+import { saveUserTokens } from "@/lib/auth/auth";
 
 export default function AuthForm({ signUp }: { signUp: boolean }) {
 	const router = useRouter();
