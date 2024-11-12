@@ -1,6 +1,6 @@
 import { authenticatedAction } from "@/lib/safe-action";
 import makeFetch from "@/lib/helpers/fetch";
-import type { SuccessResponse, TimeStamp } from "@/types/unwind";
+import type { ApiResponse, TimeStamp } from "@/types/unwind";
 import type { Profile } from "@/types/unwind/user";
 import { editProfileSchema } from "./schema";
 
@@ -13,7 +13,7 @@ export const editProfileAction = authenticatedAction
 			ctx: { user },
 		}) => {
 			try {
-				return await makeFetch<SuccessResponse<Profile & TimeStamp>>(
+				return await makeFetch<ApiResponse<Profile & TimeStamp>>(
 					"unwind",
 					"/user/profile",
 					user.accessToken,

@@ -1,11 +1,11 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import type { AnilistAnime } from "@/types/anime/anilist";
 import AnimeCard from "./card";
 import { cn } from "@/lib/utils";
+import type { JoinedAnime } from "@/app/anime/dal";
 
 export default async function AnimeDetailsTab({
 	anime,
-}: { anime: AnilistAnime; page: number }) {
+}: { anime: JoinedAnime }) {
 	const anilist = anime.anilist;
 	const hianime = anime.hianime;
 	const tabs = [

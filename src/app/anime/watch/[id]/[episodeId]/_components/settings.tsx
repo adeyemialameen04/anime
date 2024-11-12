@@ -105,7 +105,7 @@ export default function ToggleSettings({
 				)}
 			</ToggleGroup>
 			<div className="items-center gap-2 hidden md:flex">
-				<AddToList animeId={animeId} />
+				{/* <AddToList med/> */}
 				{groupedEpisode.prev && (
 					<Link href={`/anime/watch/${animeId}/${groupedEpisode?.prev}`}>
 						<Button size={"sm"} className="flex items-center gap-3">

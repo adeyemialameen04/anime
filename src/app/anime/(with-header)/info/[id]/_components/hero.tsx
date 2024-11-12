@@ -1,6 +1,5 @@
 import { Button } from "@/components/ui/button";
-import type { AnilistAnime } from "@/types/anime/anilist";
-import { LucideImage, Play, PlusCircle } from "lucide-react";
+import { LucideImage, Play } from "lucide-react";
 import Image from "next/image";
 import TruncatedDescription from "./truncated-description";
 import Link from "next/link";
@@ -14,12 +13,17 @@ import {
 	TooltipTrigger,
 } from "@/components/ui/tooltip";
 import changeImageSize from "@/lib/helpers/sizes";
-import AddToList from "@/_components/shared/add-to-list";
+import AddToList, {
+	type WatchistResponse,
+} from "@/_components/shared/add-to-list";
+import type { JoinedAnime } from "@/app/anime/dal";
 
 export default function Hero({
 	anime,
+	watchListItem,
 }: {
-	anime: any;
+	anime: JoinedAnime;
+	watchListItem: WatchistResponse;
 }) {
 	const anilist = anime.anilist;
 	const hianime = anime.hianime;
@@ -47,7 +51,7 @@ export default function Hero({
 							<div className="relative aspect-[2/3] w-full overflow-hidden rounded-lg border bg-muted shadow">
 								{anilist?.coverImage ? (
 									<Image
-										alt={`Poster for ${hianime.title || "anime"}`}
+										alt={`Poster for ${hianime.anime.info.name || "anime"}`}
 										fill
 										className="object-cover"
 										loading="lazy"
@@ -61,7 +65,7 @@ export default function Hero({
 									// biome-ignore lint/nursery/noNestedTernary: <explanation>
 								) : hianime.anime.info.poster ? (
 									<Image
-										alt={`Poster for ${hianime.title || "anime"}`}
+										alt={`Poster for ${hianime.anime.info.name || "anime"}`}
 										fill
 										className="object-cover"
 										loading="lazy"
@@ -102,11 +106,23 @@ export default function Hero({
 										</Button>
 									</Link>
 								)}
-								<AddToList animeId={hianime.anime.info.id} />
+								<AddToList
+									mediaDetails={{
+										mediaId: hianime.anime.info.id as string,
+										poster: hianime.anime.info.poster as string,
+										title: hianime.anime.info.name as string,
+										type: "anime",
+										episodes: hianime.anime.info.stats.episodes.sub as number,
+										duration: Number(
+											hianime.anime.info.stats.duration?.slice(0, -1),
+										) as number,
+									}}
+									watchListItem={watchListItem}
+								/>
 							</div>
 
 							<div className="flex gap-3 flex-wrap">
-								{hianime.anime.moreInfo.genres.map((genre) => (
+								{hianime.anime.moreInfo.genres.map((genre: string) => (
 									<Link href={`/anime/genre/${slugify(genre)}`} key={genre}>
 										<Badge variant={"outline"}>{genre}</Badge>
 									</Link>
@@ -155,7 +171,7 @@ export default function Hero({
 								CHAR_LIMIT={400}
 								text={
 									anilist?.format === "MANGA" || !anilist?.description
-										? hianime.anime.info.description
+										? (hianime.anime.info.description as string)
 										: anilist.description
 								}
 							/>
