@@ -20,8 +20,6 @@ export default async function AnimeDetail({
 		notFound();
 	}
 
-	logServer(animeDetails.data.anilist.id);
-
 	return (
 		<main className="md:container py-4">
 			<Back />

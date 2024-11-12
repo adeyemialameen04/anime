@@ -39,7 +39,6 @@ export async function saveUserTokens(data: AuthSuccess) {
 		httpOnly: true,
 		secure: process.env.NODE_ENV !== "development",
 		sameSite: "strict",
-		// maxAge: tokens.refreshTokenExpiry - Math.floor(Date.now() / 1000),
 		path: "/",
 	});
 
@@ -48,7 +47,6 @@ export async function saveUserTokens(data: AuthSuccess) {
 		httpOnly: false,
 		secure: process.env.NODE_ENV !== "development",
 		sameSite: "strict",
-		// maxAge: tokens.refreshTokenExpiry - Math.floor(Date.now() / 1000),
 		path: "/",
 	});
 }

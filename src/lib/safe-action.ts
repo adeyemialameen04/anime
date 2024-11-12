@@ -1,5 +1,5 @@
 import { createServerActionProcedure } from "zsa";
-import { assertUserAuthenticated } from "./auth";
+import { assertUserAuthenticated } from "./auth/auth";
 
 export class PublicError extends Error {
 	constructor(message: string) {

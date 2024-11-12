@@ -1,7 +1,7 @@
 import { TabsContent } from "@radix-ui/react-tabs";
 import Settings from "./_components/_settings/settings";
 import Profile from "./_components/_profile/profile";
-import { assertUserAuthenticated } from "@/lib/auth";
+import { assertUserAuthenticated } from "@/lib/auth/auth";
 import makeFetch from "@/lib/helpers/fetch";
 import type { ApiResponse, TimeStamp } from "@/types/unwind";
 import type { Profile as ProfileType } from "@/types/unwind/user";
