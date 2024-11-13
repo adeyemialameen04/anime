@@ -15,15 +15,15 @@ import {
 	FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { PasswordInput } from "@/components/ui/password-input";
 import SubmitButton from "@/_components/shared/submit-btn";
 import { Separator } from "@/components/ui/separator";
 import { authAction } from "../actions";
 import { useServerAction } from "zsa-react";
 import { type AuthSchema, signInSchema, signUpSchema } from "../schema";
-import { HTTP_STATUS } from "@/lib/constants";
+import { HTTP_STATUS, UNWIND_API_BASE_URL } from "@/lib/constants";
 import { useRouter } from "next/navigation";
 import { saveUserTokens } from "@/lib/auth/auth";
+import { PasswordStrength } from "@/components/ui/password-strength";
 
 export default function AuthForm({ signUp }: { signUp: boolean }) {
 	const router = useRouter();
@@ -65,14 +65,18 @@ export default function AuthForm({ signUp }: { signUp: boolean }) {
 
 	async function onSubmit(values: AuthSchema) {
 		try {
-			await execute({
-				...values,
-				signUp,
-			});
+			console.log(values);
+			// await execute({
+			// 	...values,
+			// 	signUp,
+			// });
 		} catch (error) {
 			console.error("Form submission error", error);
 			toast.error("Failed to submit the form. Please try again.");
 		}
+	}
+	async function signInWithGoogle() {
+		window.location.href = `${UNWIND_API_BASE_URL}/auth/google`;
 	}
 
 	return (
@@ -120,14 +124,17 @@ export default function AuthForm({ signUp }: { signUp: boolean }) {
 							<FormItem>
 								<FormLabel>Password</FormLabel>
 								<FormControl>
-									<PasswordInput placeholder="Enter your password" {...field} />
+									<PasswordStrength
+										placeholder="Enter your password"
+										{...field}
+									/>
+									{/* <PasswordInput placeholder="Enter your password" {...field} /> */}
 								</FormControl>
 								<FormDescription>Enter your password.</FormDescription>
 								<FormMessage />
 							</FormItem>
 						)}
 					/>
-
 					<SubmitButton isLoading={isPending} className="w-full">
 						Sign {signUp ? "Up" : "In"}
 					</SubmitButton>
@@ -145,7 +152,11 @@ export default function AuthForm({ signUp }: { signUp: boolean }) {
 				</div>
 			</div>
 
-			<Button className="w-full gap-5" variant={"secondary"}>
+			<Button
+				className="w-full gap-5"
+				variant={"secondary"}
+				onClick={async () => await signInWithGoogle()}
+			>
 				<FcGoogle /> Google
 			</Button>
 			<div className="text-center">

@@ -30,8 +30,10 @@ export default function SiteHeader() {
 							</kbd>
 						</p>
 					</div>
-					<Button variant={"ghost"} size={"sm"}>
-						<Github size={17} />
+					<Button variant={"ghost"} size={"sm"} asChild>
+						<a target="_blank" href="https://githib.com/adeyemialameen04/anime">
+							<Github size={17} />
+						</a>
 					</Button>
 					<Button variant={"ghost"} size={"sm"} asChild>
 						<Link href={"/user/settings"}>
