@@ -19,8 +19,8 @@ import type { EnhancedSourcedata } from "../page";
 import ToggleSettings, { type GroupedEpisode } from "./settings";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
-import { getSettings } from "@/lib/helpers/anime/settings";
 import VideoProgressSave from "@/hooks/video-progress-save";
+import { useLocalStorage } from "@/hooks/use-local-storage";
 
 export type PlayerSettings = {
 	autoSkip: boolean;
@@ -49,8 +49,11 @@ export default function WatchDetails({
 	const [currentSourceUrl, setCurrentSourceUrl] = useState(
 		currentSources.sources[0].url,
 	);
-	const [settings, setSettings] = useState<PlayerSettings>(
-		getSettings() ?? {
+	const [settings, setSettings] = useLocalStorage<PlayerSettings>(
+		"player-settings",
+		{
+			autoNext: true,
+			autoPlay: true,
 			autoSkip: false,
 		},
 	);
@@ -62,12 +65,10 @@ export default function WatchDetails({
 			: allSources.dub[0].tracks.filter((track) => track.kind === "captions");
 
 	const [getVideoProgress, UpdateVideoProgress] = VideoProgressSave();
-	const [progressSaved, setprogressSaved] = useState(false);
 	let interval;
 	const { duration } = useMediaStore(playerRef);
 	const remote = useMediaRemote(playerRef);
 	const [isPlaying, setIsPlaying] = useState(false);
-	console.log(groupedEpisode);
 
 	const skiptimes = [
 		{
@@ -138,6 +139,7 @@ export default function WatchDetails({
 		});
 	}, [settings.autoSkip]);
 
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	useEffect(() => {
 		let interval: NodeJS.Timeout;
 
@@ -166,7 +168,7 @@ export default function WatchDetails({
 		return () => {
 			clearInterval(interval);
 		};
-	}, [isPlaying, duration, animeId, groupedEpisode]);
+	}, [isPlaying, duration, animeId, groupedEpisode?.current?.number]);
 
 	function onLoadedMetadata() {
 		const seek = getVideoProgress(animeId);
@@ -205,6 +207,7 @@ export default function WatchDetails({
 		}
 	};
 
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	useEffect(() => {
 		const handleKeyDown = (event: KeyboardEvent) => {
 			if (event.key === "s") {

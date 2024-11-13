@@ -1,6 +1,8 @@
 import { type NextRequest, NextResponse } from "next/server";
 import { decodeJwt } from "./jwt";
-import { UNWIND_API_BASE_URL } from "../constants";
+import { ACCESS_JWT_KEY, HTTP_STATUS, REFRESH_JWT_KEY } from "../constants";
+import makeFetch from "../helpers/fetch";
+import type { ApiResponse } from "@/types/unwind";
 
 const DEFAULT_OFFSET_SECONDS = 15;
 
@@ -50,11 +52,10 @@ export function getMiddleware({
 export const withRefreshToken = getMiddleware({
 	shouldRefresh: async (req) => {
 		console.log("Checking if token should be refreshed");
-		const JWT_SECRET = process.env.ACCESS_JWT_KEY ?? "";
 		const accessToken = req.cookies.get("accessToken")?.value;
 		if (!accessToken) return true;
 		try {
-			const payload = await decodeJwt(accessToken, JWT_SECRET);
+			const payload = await decodeJwt(accessToken, ACCESS_JWT_KEY);
 			if (!payload || !("expires" in payload)) {
 				console.log("No expiry in token");
 				return false;
@@ -71,26 +72,23 @@ export const withRefreshToken = getMiddleware({
 	fetchTokenPair: async (req) => {
 		console.log("Fetching new token pair");
 		const refreshToken = req.cookies.get("refreshToken")?.value;
-		const JWT_SECRET = process.env.REFRESH_JWT_KEY ?? "";
 		if (!refreshToken) {
 			throw new Error("Refresh token not valid");
 		}
 
-		if (!decodeJwt(refreshToken as string, JWT_SECRET)) {
+		if (!decodeJwt(refreshToken as string, REFRESH_JWT_KEY)) {
 			throw new Error("Refresh token not valid");
 		}
 
-		const response = await fetch(`${UNWIND_API_BASE_URL}/auth/refresh`, {
-			method: "GET",
-			headers: {
-				"Content-Type": "application/json",
-				Authorization: `Bearer ${refreshToken}`,
-			},
-		});
-		if (!response.ok) {
-			throw new Error(`Failed to refresh token: ${response.statusText}`);
+		const response = await makeFetch<ApiResponse<TokenPair>>(
+			"unwind",
+			"/auth/refresh",
+			refreshToken,
+		)();
+		if (response.status !== HTTP_STATUS.OK) {
+			throw new Error(`Failed to refresh token: ${response.status}`);
 		}
-		return await response.json();
+		return response.data;
 	},
 	onSuccess: (res, tokenPair) => {
 		console.log("Setting new access token");

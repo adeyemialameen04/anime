@@ -10,3 +10,5 @@ export const HTTP_STATUS = {
 	OK: "OK",
 	NOT_FOUND: "Not Found",
 };
+export const ACCESS_JWT_KEY = process.env.ACCESS_JWT_KEY ?? "";
+export const REFRESH_JWT_KEY = process.env.REFRESH_JWT_KEY ?? "";
