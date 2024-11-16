@@ -64,8 +64,7 @@ export default function WatchDetails({
 			? allSources.sub[0].tracks.filter((track) => track.kind === "captions")
 			: allSources.dub[0].tracks.filter((track) => track.kind === "captions");
 
-	const [getVideoProgress, UpdateVideoProgress] = VideoProgressSave();
-	let interval;
+	const [getVideoProgress, updateVideoProgress] = VideoProgressSave();
 	const { duration } = useMediaStore(playerRef);
 	const remote = useMediaRemote(playerRef);
 	const [isPlaying, setIsPlaying] = useState(false);
@@ -149,7 +148,7 @@ export default function WatchDetails({
 					? Math.round(playerRef.current?.currentTime)
 					: 0;
 
-				UpdateVideoProgress(animeId, {
+				updateVideoProgress(animeId, {
 					epTitle:
 						groupedEpisode?.current.title ||
 						`EP ${groupedEpisode.current.number}`,
@@ -158,6 +157,7 @@ export default function WatchDetails({
 					duration: duration,
 					nextepNum: groupedEpisode?.next || null,
 					createdAt: new Date().toISOString(),
+					episodeId: groupedEpisode.current.episodeId,
 				});
 				console.log("updating...", animeId);
 			}, 5000);

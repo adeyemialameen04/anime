@@ -8,9 +8,11 @@ const protectedRoutes = ["/user/profile", "/user", "/user/settings"];
 
 async function middleware(req: NextRequest) {
 	const pathname = req.nextUrl.pathname;
+	console.log(pathname);
+
 	try {
 		const user = await assertUserAuthenticated();
-
+		console.log(pathname);
 		if (protectedRoutes.includes(pathname)) {
 			if (
 				!user ||

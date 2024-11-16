@@ -55,12 +55,16 @@ export function useLocalStorage<T>(
 
 		window.addEventListener("storage", handleStorageChange);
 
-		setStoredValue(readValue());
+		// Only set the stored value if it's different from the current value
+		const currentValue = readValue();
+		if (JSON.stringify(currentValue) !== JSON.stringify(storedValue)) {
+			setStoredValue(currentValue);
+		}
 
 		return () => {
 			window.removeEventListener("storage", handleStorageChange);
 		};
-	}, [key, readValue]);
+	}, [key, readValue, storedValue]);
 
 	return [storedValue, setValue];
 }
