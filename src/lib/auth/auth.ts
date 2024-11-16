@@ -8,7 +8,7 @@ export const assertUserAuthenticated = async (): Promise<AuthSuccess> => {
 	const refreshToken = cookieStore.get("refreshToken");
 	const userDataCookie = cookieStore.get("user");
 
-	if (!accessToken || !userDataCookie) {
+	if (!refreshToken || !userDataCookie) {
 		throw new Error("User not authenticated");
 	}
 

@@ -66,10 +66,10 @@ export default function AuthForm({ signUp }: { signUp: boolean }) {
 	async function onSubmit(values: AuthSchema) {
 		try {
 			console.log(values);
-			// await execute({
-			// 	...values,
-			// 	signUp,
-			// });
+			await execute({
+				...values,
+				signUp: signUp,
+			});
 		} catch (error) {
 			console.error("Form submission error", error);
 			toast.error("Failed to submit the form. Please try again.");

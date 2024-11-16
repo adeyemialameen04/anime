@@ -17,16 +17,18 @@ import AddToList, {
 	type WatchistResponse,
 } from "@/_components/shared/add-to-list";
 import type { JoinedAnime } from "@/app/anime/dal";
+import Watch from "./watch";
+import { cookies } from "next/headers";
 
-export default function Hero({
+export default async function Hero({
 	anime,
 	watchListItem,
 }: {
 	anime: JoinedAnime;
 	watchListItem: WatchistResponse;
 }) {
-	const anilist = anime.anilist;
-	const hianime = anime.hianime;
+	const anilist = anime?.anilist;
+	const hianime = anime?.hianime;
 	const random = Math.floor(Math.random() * 5);
 	return (
 		<div className="relative">
@@ -96,15 +98,10 @@ export default function Hero({
 
 						<article className="flex w-full flex-col gap-3 pt-3 md:w-2/3">
 							<div className="flex gap-3">
-								{anime.episodes && (
-									<Link
-										href={`/anime/watch/${hianime.anime.info.id}/${anime.episodes[0].episodeId}`}
-									>
-										<Button className="max-w-40">
-											<Play className="h-4 w-4" /> Watch
-										</Button>
-									</Link>
-								)}
+								<Watch
+									id={hianime.anime.info.id as string}
+									firstEpisodeId={anime.episodes[0].episodeId}
+								/>
 								<AddToList
 									mediaDetails={{
 										mediaId: hianime.anime.info.id as string,

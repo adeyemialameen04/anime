@@ -2,22 +2,39 @@
 
 import { useLocalStorage } from "./use-local-storage";
 
-function VideoProgressSave() {
-	// Use the useLocalStorage hook to store video progress data
-	const [settings, setSettings] = useLocalStorage("vidstack_settings", {});
+interface EpisodeProgress {
+	epTitle: string;
+	epNum: number;
+	timeWatched: number;
+	duration: number;
+	nextepNum: number | null;
+	createdAt: string;
+	episodeId: number;
+}
 
-	// Function to get the progress of a specific video by its ID
-	const getVideoProgress = (id: string) => {
+interface VidstackSettings {
+	[animeId: string]: EpisodeProgress;
+}
+
+function VideoProgressSave() {
+	const [settings, setSettings] = useLocalStorage<VidstackSettings>(
+		"vidstack_settings",
+		{},
+	);
+
+	const getVideoProgress = (id: string): EpisodeProgress | undefined => {
 		return settings[id];
 	};
 
-	// Function to update the video progress for a given video ID
-	const updateVideoProgress = (id: string, data: any) => {
-		const updatedSettings = { ...settings, [id]: data };
-		setSettings(updatedSettings); // Update the state and localStorage
+	const updateVideoProgress = (
+		animeId: string,
+		data: EpisodeProgress,
+	): void => {
+		const updatedSettings = { ...settings, [animeId]: data };
+		setSettings(updatedSettings);
 	};
 
-	return [getVideoProgress, updateVideoProgress];
+	return [getVideoProgress, updateVideoProgress] as const;
 }
 
 export default VideoProgressSave;

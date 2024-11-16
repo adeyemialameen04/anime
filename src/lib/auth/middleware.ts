@@ -19,31 +19,43 @@ export function getMiddleware({
 }: {
 	shouldRefresh: (req: NextRequest) => Promise<boolean>;
 	fetchTokenPair: (req: NextRequest) => Promise<TokenPair>;
-	onSuccess: (res: NextResponse, tokenPair: TokenPair) => void;
+	onSuccess: (tokenPair: TokenPair) => void;
 	onError?: (req: NextRequest, res: NextResponse, error: unknown) => void;
 }) {
 	return function withRefreshToken(
 		middleware: (req: NextRequest) => Promise<NextResponse>,
 	) {
-		return async (req: NextRequest): Promise<NextResponse> => {
+		return async (req: NextRequest): Promise<Response> => {
 			try {
 				if (await shouldRefresh(req)) {
 					console.log("Refreshing token");
 					const tokenPair = await fetchTokenPair(req);
-					const res = NextResponse.next();
-					onSuccess(res, tokenPair);
-					return res;
+					const response = onSuccess(tokenPair);
+
+					// Call the main middleware function
+					const middlewareResponse = await middleware(req);
+
+					// Merge the headers from both responses
+					const mergedHeaders = new Headers(middlewareResponse.headers);
+					for (const [key, value] of response.headers.entries()) {
+						mergedHeaders.set(key, value);
+					}
+
+					// Create a new response with merged headers
+					return new Response(middlewareResponse.body, {
+						status: middlewareResponse.status,
+						statusText: middlewareResponse.statusText,
+						headers: mergedHeaders,
+					});
 				}
 			} catch (error) {
 				console.error("Error in token refresh:", error);
 				if (onError) {
-					console.error("Gotcha lol");
-					const res = NextResponse.next();
-					onError(req, res, error);
-					return res;
+					return onError(req, error);
 				}
 			}
 
+			// If no refresh was needed or it failed, just call the main middleware
 			return middleware(req);
 		};
 	};
@@ -90,33 +102,19 @@ export const withRefreshToken = getMiddleware({
 		}
 		return response.data;
 	},
-	onSuccess: (res, tokenPair) => {
+	onSuccess: (tokenPair) => {
 		console.log("Setting new access token");
-		res.cookies.set({
-			name: "accessToken",
-			value: tokenPair.accessToken,
-			httpOnly: true,
-			secure: process.env.NODE_ENV !== "development",
-			sameSite: "strict",
-			maxAge: 14 * 60,
-			path: "/",
+		const cookieValue = `accessToken=${tokenPair.accessToken}; HttpOnly; Secure; SameSite=Strict; Max-Age=900; Path=/`;
+		return new Response(null, {
+			status: 200,
+			headers: {
+				"Set-Cookie": cookieValue,
+			},
 		});
 	},
 
 	onError: (req, _, error) => {
 		console.error("Error in refresh token process:", error);
-		// res.cookies.set({
-		//   name: "accessToken",
-		//   value: "",
-		//   maxAge: 0,
-		//   path: "/",
-		// });
-		// res.cookies.set({
-		//   name: "refreshToken",
-		//   value: "",
-		//   maxAge: 0,
-		//   path: "/",
-		// });
 		if (error) {
 			return NextResponse.redirect(new URL("/auth", req.url));
 		}

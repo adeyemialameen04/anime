@@ -44,6 +44,7 @@ export default function AddToList({
 	mediaDetails,
 	watchListItem,
 }: { mediaDetails: ListInsert; watchListItem: WatchistResponse }) {
+	console.log(watchListItem);
 	const router = useRouter();
 	const editActions: { title: string; value: StatusEnum; icon?: LucideIcon }[] =
 		[

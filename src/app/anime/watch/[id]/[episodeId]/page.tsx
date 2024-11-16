@@ -77,6 +77,7 @@ export default async function AnimeDetail({
 	const allSources = await getAllSources(ep, servers?.data);
 	const random = Math.floor(Math.random() * 5);
 	// console.log("\n\n\n", allSources, "\n\n\n");
+	// logServer(servers);
 
 	const activeEpisode = episodes.find(
 		(episode) => episode.id.split("=").pop() === ep,
