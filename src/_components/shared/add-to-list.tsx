@@ -72,11 +72,11 @@ export default function AddToList({
 		useServerAction(addToListAction, {
 			onSuccess: async ({ data }) => {
 				if (data.status === HTTP_STATUS.CREATED) {
+					await revalidateTagServer("watchlist");
 					toast.success("Added to watch List");
 				} else if (data.status === HTTP_STATUS.CONFLICT) {
 					toast.success("Already in watch list");
 				}
-				await revalidateTagServer("watchlist");
 				console.log(data);
 			},
 			onError: ({ err }) => {
@@ -94,12 +94,12 @@ export default function AddToList({
 		useServerAction(editListAction, {
 			onSuccess: async ({ data }) => {
 				if (data.status === HTTP_STATUS.NOT_FOUND) {
+					await revalidateTagServer("watchlist");
+					console.log(data);
 					toast.success("This item isn't your list");
 				} else if (data.status === HTTP_STATUS.OK) {
 					toast.success("Updated list successfully");
 				}
-				await revalidateTagServer("watchlist");
-				console.log(data);
 			},
 			onError: ({ err }) => {
 				if (err.message.includes("User not authenticated")) {
@@ -122,6 +122,9 @@ export default function AddToList({
 					status: "watching",
 					poster: mediaDetails.poster,
 					mediaId: mediaDetails.mediaId,
+					episodes: mediaDetails.episodes,
+					duration: mediaDetails.duration,
+					mediaType: "movie",
 				});
 			}}
 		>

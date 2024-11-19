@@ -20,6 +20,9 @@ export const addToListAction = authenticatedAction
 			status: StatusEnum,
 			title: z.string(),
 			type: MediaTypeEnum,
+			episodes: z.number().optional(),
+			duration: z.number().optional(),
+			mediaType: z.string(),
 		}),
 	)
 	.handler(async ({ input, ctx: { user } }) => {

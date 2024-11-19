@@ -11,7 +11,7 @@ export type ErrorResponse = {
 	detail: string;
 };
 
-export type TimeStamp = {
+	export type TimeStamp = {
 	createdAt: string;
 	updatedAt: string;
 };

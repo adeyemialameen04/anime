@@ -38,7 +38,6 @@ export default function RootLayout({
 					disableTransitionOnChange
 				>
 					<Toaster />
-					{/* <SiteHeader /> */}
 					{children}
 				</ThemeProvider>
 			</body>

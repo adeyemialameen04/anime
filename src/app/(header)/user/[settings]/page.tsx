@@ -1,10 +1,11 @@
 import { TabsContent } from "@radix-ui/react-tabs";
-import Settings from "./_components/_settings/settings";
-import Profile from "./_components/_profile/profile";
+import Settings from "./_components/settings";
+import Profile from "./_components/profile";
 import { assertUserAuthenticated } from "@/lib/auth/auth";
 import makeFetch from "@/lib/helpers/fetch";
 import type { ApiResponse, TimeStamp } from "@/types/unwind";
-import type { Profile as ProfileType } from "@/types/unwind/user";
+import type { Profile as ProfileType, WatchList } from "@/types/unwind/user";
+import WatchListGrid from "./_components/watch-list";
 
 const getProfile = async () => {
 	const user = await assertUserAuthenticated();
@@ -25,17 +26,49 @@ const getProfile = async () => {
 	}
 };
 
-export default async function UserPage() {
-	const profileRes = await getProfile();
+const getWatchList = async () => {
+	const user = await assertUserAuthenticated();
+
+	try {
+		return await makeFetch<ApiResponse<WatchList[]>>(
+			"unwind",
+			"/user/watch-list",
+			user.accessToken,
+			{
+				next: {
+					tags: [`watch-list-${user.user.profileId}`],
+				},
+			},
+		)();
+	} catch (err) {
+		console.error(err);
+	}
+};
+
+export default async function UserPage({
+	params,
+}: { params: Promise<{ settings: string }> }) {
+	const currentPage = (await params).settings;
+	let profileRes: ApiResponse<ProfileType & TimeStamp> | undefined;
+	let watchListResponse: ApiResponse<WatchList[]> | undefined;
+	if (currentPage === "profile") profileRes = await getProfile();
+	if (currentPage === "watchlist") watchListResponse = await getWatchList();
 
 	return (
 		<>
 			<TabsContent value="settings" className="">
 				<Settings />
 			</TabsContent>
-			<TabsContent value="profile" className="">
-				<Profile profileData={profileRes?.data as ProfileType & TimeStamp} />
-			</TabsContent>
+			{currentPage === "profile" && (
+				<TabsContent value="profile" className="">
+					<Profile profileData={profileRes?.data as ProfileType & TimeStamp} />
+				</TabsContent>
+			)}
+			{currentPage === "watchlist" && (
+				<TabsContent value="watchlist" className="">
+					<WatchListGrid watchlist={watchListResponse?.data as WatchList[]} />
+				</TabsContent>
+			)}
 		</>
 	);
 }
