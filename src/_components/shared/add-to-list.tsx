@@ -124,7 +124,7 @@ export default function AddToList({
 					mediaId: mediaDetails.mediaId,
 					episodes: mediaDetails.episodes,
 					duration: mediaDetails.duration,
-					mediaType: "movie",
+					mediaType: "tv",
 				});
 			}}
 		>

@@ -27,8 +27,9 @@ export default async function UserLayout({
 		{ title: "Settings", icon: Settings2 },
 	];
 	const isPageInTabs = tabs.some(
-		(tab) => tab.title.toLowerCase() === currentPage.toLowerCase(),
+		(tab) => slugify(tab.title.toLowerCase()) === currentPage.toLowerCase(),
 	);
+	console.log(isPageInTabs, "HERE", currentPage);
 	if (!isPageInTabs) {
 		return notFound();
 	}

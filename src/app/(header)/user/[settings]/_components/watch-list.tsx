@@ -3,6 +3,15 @@ import type { WatchList } from "@/types/unwind/user";
 import Image from "next/image";
 import changeImageSize from "@/lib/helpers/sizes";
 import { LucideImage } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import {
+	Tooltip,
+	TooltipProvider,
+	TooltipTrigger,
+	TooltipContent,
+} from "@/components/ui/tooltip";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
 export default function WatchListGrid({
 	watchlist,
 }: { watchlist: WatchList[] }) {
@@ -18,13 +27,13 @@ export default function WatchListGrid({
 const WatchListItem = ({ media }: { media: WatchList }) => {
 	console.log(media);
 	return (
-		<Card className="shadow-none">
-			<div className="relative aspect-[2/3] w-full overflow-hidden border bg-muted">
+		<Card className="shadow-none rounded-lg">
+			<div className="relative aspect-square h-fit w-full overflow-hidden">
 				{media.poster ? (
 					<Image
 						alt={`Poster for ${media.poster || "anime"}`}
 						fill
-						className="object-cover"
+						className="object-cover max-h-[300px]"
 						loading="lazy"
 						sizes="(max-width: 768px) 100vw, 33vw"
 						src={changeImageSize(media.poster)}
@@ -35,10 +44,31 @@ const WatchListItem = ({ media }: { media: WatchList }) => {
 					</div>
 				)}
 			</div>
-			<CardHeader className="flex flex-col ">
-				<CardTitle className="font-space-grotesk">{media.title}</CardTitle>
-				<div>
-					<span className=""></span>
+			<CardHeader className="flex justify-between flex-row items-center">
+				<CardTitle className="font-space-grotesk">
+					<Button variant={"link"} asChild className="p-0">
+						<Link
+							href={
+								media.type === "anime" ? `/anime/info/${media.mediaId}` : ""
+							}
+						>
+							{media.title}
+						</Link>
+					</Button>
+				</CardTitle>
+				<div className="capitalize flex gap-2 items-center">
+					<Badge>{media.mediaType}</Badge>
+
+					<TooltipProvider>
+						<Tooltip>
+							<TooltipTrigger asChild>
+								<Badge variant={"secondary"}>{media.episodes}</Badge>
+							</TooltipTrigger>
+							<TooltipContent>
+								<p>Episodes</p>
+							</TooltipContent>
+						</Tooltip>
+					</TooltipProvider>
 				</div>
 			</CardHeader>
 		</Card>

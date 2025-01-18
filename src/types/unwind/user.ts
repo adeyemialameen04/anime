@@ -13,6 +13,7 @@ export type WatchList = {
 	id: string;
 	userId: string;
 	type: MediaTypeEnum;
+	mediaType: string;
 	mediaId: string;
 	poster: string;
 	title: string;

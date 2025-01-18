@@ -28,6 +28,7 @@ export default async function UserLayout({
 	const isPageInTabs = tabs.some(
 		(tab) => tab.title.toLowerCase() === currentPage.toLowerCase(),
 	);
+	console.log(isPageInTabs, "HERE");
 	if (!isPageInTabs) {
 		return notFound();
 	}
